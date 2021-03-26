@@ -1,8 +1,8 @@
 {
   "files": {
-    "main.css": "/sam-scrum/static/css/main.9d5b29c0.chunk.css",
-    "main.js": "/sam-scrum/static/js/main.702ea04e.chunk.js",
-    "main.js.map": "/sam-scrum/static/js/main.702ea04e.chunk.js.map",
+    "main.css": "/sam-scrum/static/css/main.856451a1.chunk.css",
+    "main.js": "/sam-scrum/static/js/main.655a257d.chunk.js",
+    "main.js.map": "/sam-scrum/static/js/main.655a257d.chunk.js.map",
     "runtime-main.js": "/sam-scrum/static/js/runtime-main.c1611408.js",
     "runtime-main.js.map": "/sam-scrum/static/js/runtime-main.c1611408.js.map",
     "static/js/2.902da10d.chunk.js": "/sam-scrum/static/js/2.902da10d.chunk.js",
@@ -10,14 +10,14 @@
     "static/js/3.ddb55736.chunk.js": "/sam-scrum/static/js/3.ddb55736.chunk.js",
     "static/js/3.ddb55736.chunk.js.map": "/sam-scrum/static/js/3.ddb55736.chunk.js.map",
     "index.html": "/sam-scrum/index.html",
-    "static/css/main.9d5b29c0.chunk.css.map": "/sam-scrum/static/css/main.9d5b29c0.chunk.css.map",
+    "static/css/main.856451a1.chunk.css.map": "/sam-scrum/static/css/main.856451a1.chunk.css.map",
     "static/js/2.902da10d.chunk.js.LICENSE.txt": "/sam-scrum/static/js/2.902da10d.chunk.js.LICENSE.txt",
     "static/media/logo.6ce24c58.svg": "/sam-scrum/static/media/logo.6ce24c58.svg"
   },
   "entrypoints": [
     "static/js/runtime-main.c1611408.js",
     "static/js/2.902da10d.chunk.js",
-    "static/css/main.9d5b29c0.chunk.css",
-    "static/js/main.702ea04e.chunk.js"
+    "static/css/main.856451a1.chunk.css",
+    "static/js/main.655a257d.chunk.js"
   ]
 }
