@@ -1,4 +1,8 @@
 # sam-scrum
+
+
+This website is deployed on https://ogdentrod.github.io/sam-scrum/
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).

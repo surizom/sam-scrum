@@ -2,6 +2,7 @@
   "name": "sam-scrum",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://ogdentrod.github.io/sam-scrum/",
   "dependencies": {
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
