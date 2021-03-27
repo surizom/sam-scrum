@@ -1,26 +1,50 @@
+import "./css/reset.css";
+import "./css/global.css";
 import React from "react";
-import logo from "./logo.svg";
-import "./App.css";
+import styled from "styled-components";
+import Board from "./components/Board";
+import github from "./img/github.png";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+const Heading = styled.div`
+  font-family: roboto;
+  color: white;
+  margin: 8px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 40px;
+  position: relative;
+  & img {
+    position: absolute;
+    background-color: white;
+    left: 0;
+    top: 0;
+    border-radius: 3px;
+    height: 40px;
+    width: 40px;
+    padding: 3px;
+  }
+`;
+
+const Container = styled.div`
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+`;
+
+const App = () => (
+  <Container>
+    <Heading>
+      <a
+        target="_blank"
+        rel="noopener noreferrer"
+        href="https://github.com/tberghuis/trello-board-clone"
+      >
+        <img src={github} alt="Github" />
+      </a>
+      <span>Trello Board Clone</span>
+    </Heading>
+    <Board />
+  </Container>
+);
 
 export default App;
