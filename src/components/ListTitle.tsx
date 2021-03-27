@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-props-no-spreading */
 import React, { HTMLAttributes, useState } from "react";
 import styled from "styled-components";
 import AutoSizeTextArea from "./AutoSizeTextArea";

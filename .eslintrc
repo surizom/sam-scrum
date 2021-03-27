@@ -9,9 +9,7 @@
   "rules": {
     "prettier/prettier": [
       "error"
-    ],
-    "no-param-reassign": "off",
-    "react/jsx-props-no-spreading": "off"
+    ]
   },
   "parserOptions": {
     "project": "./tsconfig.json"

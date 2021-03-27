@@ -1,6 +1,8 @@
 import { DraggableLocation } from "react-beautiful-dnd";
 import { Subject } from "rxjs";
 import uuid from "uuidv4";
+import { omit } from "lodash";
+
 import { BoardData, Card, Cards, Column } from "../types/types";
 
 let boardData: BoardData;
@@ -11,27 +13,84 @@ boardDataSubject.subscribe((_boardData: BoardData) => {
   boardData = _boardData;
 });
 
+const reorderUniqueListPosition = ({
+  initialPosition,
+  finalPosition,
+  list,
+}: {
+  initialPosition: number;
+  finalPosition: number;
+  list: Column;
+}): Column => {
+  if (list.position === initialPosition) {
+    return {
+      ...list,
+      position: finalPosition,
+    };
+  }
+  if (
+    list.position < Math.min(initialPosition, finalPosition) ||
+    list.position > Math.max(initialPosition, finalPosition)
+  ) {
+    return {
+      ...list,
+    };
+  }
+  if (initialPosition < finalPosition) {
+    return {
+      ...list,
+      position: list.position - 1,
+    };
+  }
+  return {
+    ...list,
+    position: list.position + 1,
+  };
+};
+
 // TODO I should generalise this function (DRY)
 export const reorderListPosition = (initialPosition: number, finalPosition: number) => {
-  Object.values(boardData).forEach((list: Column) => {
-    if (list.position === initialPosition) {
-      list.position = finalPosition;
-      return;
-    }
-    if (
-      list.position < Math.min(initialPosition, finalPosition) ||
-      list.position > Math.max(initialPosition, finalPosition)
-    ) {
-      return;
-    }
-    if (initialPosition < finalPosition) {
-      list.position -= 1;
-      return;
-    }
-    list.position += 1;
-  });
+  const newBoardData = Object.fromEntries(
+    Object.entries(boardData).map(([key, value]) => [
+      key,
+      reorderUniqueListPosition({ list: value, initialPosition, finalPosition }),
+    ])
+  );
 
-  boardDataSubject.next({ ...boardData });
+  boardDataSubject.next(newBoardData);
+};
+
+const moveCardWithinSameList = ({
+  sourceIndex,
+  destinationIndex,
+  card,
+}: {
+  sourceIndex: number;
+  destinationIndex: number;
+  card: Card;
+}): Card => {
+  if (card.position === sourceIndex) {
+    return {
+      ...card,
+      position: destinationIndex,
+    };
+  }
+  if (
+    card.position < Math.min(sourceIndex, destinationIndex) ||
+    card.position > Math.max(sourceIndex, destinationIndex)
+  ) {
+    return card;
+  }
+  if (sourceIndex < destinationIndex) {
+    return {
+      ...card,
+      position: card.position - 1,
+    };
+  }
+  return {
+    ...card,
+    position: card.position + 1,
+  };
 };
 
 export const reorderCardPosition = (
@@ -42,45 +101,70 @@ export const reorderCardPosition = (
   // moving card within same list
   if (source.droppableId === destination.droppableId) {
     const { cards } = boardData[source.droppableId];
-    Object.values(cards).forEach((card: Card) => {
-      if (card.position === source.index) {
-        card.position = destination.index;
-        return;
-      }
-      if (
-        card.position < Math.min(source.index, destination.index) ||
-        card.position > Math.max(source.index, destination.index)
-      ) {
-        return;
-      }
-      if (source.index < destination.index) {
-        card.position -= 1;
-        return;
-      }
-      card.position += 1;
-    });
+    const newCards = Object.fromEntries(
+      Object.entries(cards).map(([key, value]) => [
+        key,
+        moveCardWithinSameList({
+          card: value,
+          sourceIndex: source.index,
+          destinationIndex: destination.index,
+        }),
+      ])
+    );
+    const newBoardData = {
+      ...boardData,
+      [source.droppableId]: {
+        ...boardData[source.droppableId],
+        cards: newCards,
+      },
+    };
+    boardDataSubject.next(newBoardData);
   }
   // moving card between different lists
   else {
-    const sourceCards: Cards = boardData[source.droppableId].cards;
-    const destinationCards: Cards = boardData[destination.droppableId].cards;
-    const movingCard: Card = boardData[source.droppableId].cards[cardId];
-    Object.values(sourceCards).forEach((card: Card) => {
-      if (card.position > source.index) {
-        card.position -= 1;
-      }
-    });
-    Object.values(destinationCards).forEach((card: Card) => {
-      if (card.position >= destination.index) {
-        card.position += 1;
-      }
-    });
-    delete boardData[source.droppableId].cards[cardId];
-    movingCard.position = destination.index;
-    boardData[destination.droppableId].cards[cardId] = movingCard;
-  }
+    const sourceCards: Cards = Object.fromEntries(
+      Object.entries(boardData[source.droppableId].cards).map(([key, value]) => [
+        key,
+        {
+          ...value,
+          position: value.position > source.index ? value.position - 1 : value.position,
+        },
+      ])
+    );
+    const destinationCards: Cards = Object.fromEntries(
+      Object.entries(boardData[destination.droppableId].cards).map(([key, value]) => [
+        key,
+        {
+          ...value,
+          position: value.position >= destination.index ? value.position + 1 : value.position,
+        },
+      ])
+    );
+    const movingCard: Card = {
+      ...boardData[source.droppableId].cards[cardId],
+      position: destination.index,
+    };
 
-  boardDataSubject.next({ ...boardData });
+    const newBoardData = omit(
+      {
+        ...boardData,
+        [source.droppableId]: {
+          ...boardData[source.droppableId],
+          cards: sourceCards,
+        },
+        [destination.droppableId]: {
+          ...boardData[destination.droppableId],
+          cards: {
+            ...destinationCards,
+            [cardId]: movingCard,
+          },
+        },
+      },
+      [`${source.droppableId}.cards.${cardId}`]
+    );
+
+    boardDataSubject.next(newBoardData);
+  }
 };
 
 export const addCard = (listId: string, content: string) => {
