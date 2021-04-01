@@ -1,10 +1,11 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import styled from "styled-components";
 import { Draggable } from "react-beautiful-dnd";
 import { Card as CardType } from "../types/types";
-import { updateCard, deleteCard } from "../state/boardData";
 import AutoSizeTextArea from "./AutoSizeTextArea";
+import { ProjectContext } from "../state/projectContext";
+import { ProjectAction } from "../state/constants";
 
 // TODO refactor so code shared title and content
 
@@ -54,8 +55,10 @@ type CardProps = {
 const Card = ({ listId, cardId, cardData }: CardProps) => {
   const [editMode, setEditMode] = useState<boolean>(false);
 
+  const { dispatch } = useContext(ProjectContext);
+
   const onSave = (content: string) => {
-    updateCard(listId, cardId, content);
+    dispatch({ type: ProjectAction.UPDATE_CARD, listId, cardId, content });
     setEditMode(false);
   };
 
@@ -64,7 +67,7 @@ const Card = ({ listId, cardId, cardData }: CardProps) => {
   };
 
   const deleteClick = () => {
-    deleteCard(listId, cardId);
+    dispatch({ type: ProjectAction.DELETE_CARD, listId, cardId });
   };
 
   return (

@@ -1,8 +1,9 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import React, { HTMLAttributes, useState } from "react";
+import React, { HTMLAttributes, useContext, useState } from "react";
 import styled from "styled-components";
 import AutoSizeTextArea from "./AutoSizeTextArea";
-import { updateListTitle, deleteList } from "../state/boardData";
+import { ProjectAction } from "../state/constants";
+import { ProjectContext } from "../state/projectContext";
 
 const Delete = styled.div`
   position: absolute;
@@ -52,13 +53,15 @@ const ListTitle = ({ setDragBlocking, dragHandleProps, listId, title }: ListTile
   const [editMode, setEditMode] = useState<boolean>(false);
   const [updateValue, setUpdateValue] = useState<string>(title);
 
+  const { dispatch } = useContext(ProjectContext);
+
   const onSave = (_title: string) => {
     if (_title.trim() === "") {
       // this is hack, prevent user accidently deleting title
       setUpdateValue("");
       setTimeout(() => setUpdateValue(title), 0);
     } else {
-      updateListTitle(listId, _title);
+      dispatch({ type: ProjectAction.UPDATE_LIST_TITLE, listId, listTitle: _title });
     }
 
     setDragBlocking(false);
@@ -71,7 +74,7 @@ const ListTitle = ({ setDragBlocking, dragHandleProps, listId, title }: ListTile
   };
 
   const deleteClick = () => {
-    deleteList(listId);
+    dispatch({ type: ProjectAction.DELETE_LIST, listId });
   };
 
   return (

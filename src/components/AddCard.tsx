@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import styled from "styled-components";
-import { addCard } from "../state/boardData";
+import { ProjectAction } from "../state/constants";
+import { ProjectContext } from "../state/projectContext";
 import AutoSizeTextArea from "./AutoSizeTextArea";
 
 const Button = styled.div`
@@ -25,6 +26,8 @@ type AddCardProps = {
 const AddCard = ({ listId }: AddCardProps) => {
   const [compose, setCompose] = useState<boolean>(false);
 
+  const { dispatch } = useContext(ProjectContext);
+
   if (!compose) {
     return (
       <Button onClick={() => setCompose(true)}>
@@ -34,7 +37,7 @@ const AddCard = ({ listId }: AddCardProps) => {
   }
 
   const onSave = (content: string) => {
-    addCard(listId, content);
+    dispatch({ type: ProjectAction.ADD_CARD, listId, content });
     setCompose(false);
   };
 

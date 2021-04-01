@@ -1,12 +1,6 @@
-import localforage from "localforage";
-import { boardDataSubject } from "./state/boardData";
-import { BoardData } from "./types/types";
+import { BoardData } from "../types/types";
 
-boardDataSubject.subscribe((boardData: BoardData) => {
-  localforage.setItem("boardData", boardData);
-});
-
-const defaultBoardData = {
+export const INITIAL_BOARD_DATA: BoardData = {
   "5cac8c9e-f91b-438a-9e18-00cea4667ee3": {
     position: 0,
     list_title: "todo",
@@ -41,14 +35,13 @@ const defaultBoardData = {
   },
 };
 
-localforage.getItem<BoardData>("boardData").then((boardData: BoardData | null) => {
-  // first time run, populate board with default data
-  if (boardData === null) {
-    boardDataSubject.next(defaultBoardData);
-    return;
-  }
-  boardDataSubject.next(boardData);
-});
-// .catch(function(err) {
-//   console.log("localforage catch", err);
-// });
+export enum ProjectAction {
+  REORDER_LIST_POSITION = "reorderListPosition",
+  REORDER_CARD_POSITION = "reorderCardPosition",
+  ADD_CARD = "addCard",
+  UPDATE_CARD = "updateCard",
+  DELETE_CARD = "deleteCard",
+  ADD_LIST = "addList",
+  DELETE_LIST = "deleteList",
+  UPDATE_LIST_TITLE = "updateListTitle",
+}

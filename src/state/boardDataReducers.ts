@@ -1,17 +1,8 @@
 import { DraggableLocation } from "react-beautiful-dnd";
-import { Subject } from "rxjs";
 import uuid from "uuidv4";
 import { omit } from "lodash";
 
 import { BoardData, Card, Cards, Column } from "../types/types";
-
-let boardData: BoardData;
-
-export const boardDataSubject = new Subject<BoardData>();
-
-boardDataSubject.subscribe((_boardData: BoardData) => {
-  boardData = _boardData;
-});
 
 const reorderUniqueListPosition = ({
   initialPosition,
@@ -49,7 +40,11 @@ const reorderUniqueListPosition = ({
 };
 
 // TODO I should generalise this function (DRY)
-export const reorderListPosition = (initialPosition: number, finalPosition: number) => {
+export const reorderListPosition = (
+  boardData: BoardData,
+  initialPosition: number,
+  finalPosition: number
+): BoardData => {
   const newBoardData = Object.fromEntries(
     Object.entries(boardData).map(([key, value]) => [
       key,
@@ -57,7 +52,7 @@ export const reorderListPosition = (initialPosition: number, finalPosition: numb
     ])
   );
 
-  boardDataSubject.next(newBoardData);
+  return newBoardData;
 };
 
 const moveCardWithinSameList = ({
@@ -94,10 +89,11 @@ const moveCardWithinSameList = ({
 };
 
 export const reorderCardPosition = (
+  boardData: BoardData,
   source: DraggableLocation,
   destination: DraggableLocation,
   cardId: string
-) => {
+): BoardData => {
   // moving card within same list
   if (source.droppableId === destination.droppableId) {
     const { cards } = boardData[source.droppableId];
@@ -118,88 +114,106 @@ export const reorderCardPosition = (
         cards: newCards,
       },
     };
-    boardDataSubject.next(newBoardData);
+    return newBoardData;
   }
   // moving card between different lists
-  else {
-    const sourceCards: Cards = Object.fromEntries(
-      Object.entries(boardData[source.droppableId].cards).map(([key, value]) => [
-        key,
-        {
-          ...value,
-          position: value.position > source.index ? value.position - 1 : value.position,
-        },
-      ])
-    );
-    const destinationCards: Cards = Object.fromEntries(
-      Object.entries(boardData[destination.droppableId].cards).map(([key, value]) => [
-        key,
-        {
-          ...value,
-          position: value.position >= destination.index ? value.position + 1 : value.position,
-        },
-      ])
-    );
-    const movingCard: Card = {
-      ...boardData[source.droppableId].cards[cardId],
-      position: destination.index,
-    };
-
-    const newBoardData = omit(
+  const sourceCards: Cards = Object.fromEntries(
+    Object.entries(boardData[source.droppableId].cards).map(([key, value]) => [
+      key,
       {
-        ...boardData,
-        [source.droppableId]: {
-          ...boardData[source.droppableId],
-          cards: sourceCards,
-        },
-        [destination.droppableId]: {
-          ...boardData[destination.droppableId],
-          cards: {
-            ...destinationCards,
-            [cardId]: movingCard,
-          },
+        ...value,
+        position: value.position > source.index ? value.position - 1 : value.position,
+      },
+    ])
+  );
+  const destinationCards: Cards = Object.fromEntries(
+    Object.entries(boardData[destination.droppableId].cards).map(([key, value]) => [
+      key,
+      {
+        ...value,
+        position: value.position >= destination.index ? value.position + 1 : value.position,
+      },
+    ])
+  );
+  const movingCard: Card = {
+    ...boardData[source.droppableId].cards[cardId],
+    position: destination.index,
+  };
+
+  const newBoardData = omit(
+    {
+      ...boardData,
+      [source.droppableId]: {
+        ...boardData[source.droppableId],
+        cards: sourceCards,
+      },
+      [destination.droppableId]: {
+        ...boardData[destination.droppableId],
+        cards: {
+          ...destinationCards,
+          [cardId]: movingCard,
         },
       },
-      [`${source.droppableId}.cards.${cardId}`]
-    );
+    },
+    [`${source.droppableId}.cards.${cardId}`]
+  );
 
-    boardDataSubject.next(newBoardData);
-  }
+  return newBoardData;
 };
 
-export const addCard = (listId: string, content: string) => {
+export const addCard = (boardData: BoardData, listId: string, content: string): BoardData => {
   const listCards: Cards = boardData[listId].cards;
   const position: number = Object.keys(listCards).length;
   const card: Card = { position, card_content: content };
-  boardData[listId].cards[uuid()] = card;
-
-  // refactor to only update changed list for optimisation???
-  boardDataSubject.next({ ...boardData });
+  const newId = uuid();
+  return {
+    ...boardData,
+    [listId]: {
+      ...boardData[listId],
+      cards: {
+        ...boardData[listId].cards,
+        [newId]: card,
+      },
+    },
+  };
 };
 
-export const updateCard = (listId: string, cardId: string, content: string) => {
-  boardData[listId].cards[cardId].card_content = content;
-  boardDataSubject.next({ ...boardData });
-};
+export const updateCard = (
+  boardData: BoardData,
+  listId: string,
+  cardId: string,
+  content: string
+): BoardData => ({
+  ...boardData,
+  [listId]: {
+    ...boardData[listId],
+    cards: {
+      ...boardData[listId].cards,
+      [cardId]: {
+        ...boardData[listId].cards[cardId],
+        card_content: content,
+      },
+    },
+  },
+});
 
-export const addList = (listTitle: string) => {
+export const addList = (boardData: BoardData, listTitle: string): BoardData => {
   const position: number = Object.keys(boardData).length;
   const list: Column = { position, list_title: listTitle, cards: {} };
-  boardData[uuid()] = list;
-  boardDataSubject.next({ ...boardData });
+  const newId = uuid();
+  const newBoardData = {
+    ...boardData,
+    [newId]: list,
+  };
+  return newBoardData;
 };
 
-export const updateListTitle = (listId: string, listTitle: string) => {
-  boardData[listId].list_title = listTitle;
-  boardDataSubject.next({ ...boardData });
+export const updateListTitle = (boardData: BoardData, listId: string, listTitle: string) => {
+  const updatedList = { ...boardData[listId], listTitle };
+  return { ...boardData, [listId]: updatedList };
 };
 
-export const deleteList = (listId: string) => {
-  delete boardData[listId];
-  boardDataSubject.next({ ...boardData });
-};
+export const deleteList = (boardData: BoardData, listId: string) => omit(boardData, [listId]);
 
-export const deleteCard = (listId: string, cardId: string) => {
-  delete boardData[listId].cards[cardId];
-  boardDataSubject.next({ ...boardData });
-};
+export const deleteCard = (boardData: BoardData, listId: string, cardId: string) =>
+  omit(boardData, [`${listId}.cards.${cardId}`]);

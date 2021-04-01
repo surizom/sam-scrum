@@ -1,6 +1,7 @@
-import React, { useState, useRef, useEffect, ChangeEvent, KeyboardEvent } from "react";
+import React, { useState, useRef, useEffect, ChangeEvent, KeyboardEvent, useContext } from "react";
 import styled from "styled-components";
-import { addList } from "../state/boardData";
+import { ProjectAction } from "../state/constants";
+import { ProjectContext } from "../state/projectContext";
 
 const Container = styled.div`
   width: 272px;
@@ -48,6 +49,9 @@ const AddList = () => {
   };
   const refInput = useRef<HTMLInputElement>(null);
 
+  const projectContext = useContext(ProjectContext);
+  const { dispatch } = projectContext;
+
   useEffect(() => {
     if (compose && refInput.current) {
       refInput.current.focus();
@@ -57,7 +61,7 @@ const AddList = () => {
   const onKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.keyCode === 13) {
       // e.preventDefault();
-      addList(listTitle);
+      dispatch({ type: ProjectAction.ADD_LIST, listTitle });
       setListTitle("");
       setCompose(false);
     }
@@ -65,7 +69,7 @@ const AddList = () => {
 
   const onBlur = () => {
     if (listTitle.length > 0) {
-      addList(listTitle);
+      dispatch({ type: ProjectAction.ADD_LIST, listTitle });
       setListTitle("");
     }
     setCompose(false);

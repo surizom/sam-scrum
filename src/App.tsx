@@ -4,6 +4,7 @@ import React from "react";
 import styled from "styled-components";
 import Board from "./components/Board";
 import github from "./img/github.png";
+import { ProjectProvider } from "./state/projectContext";
 
 const Heading = styled.div`
   font-family: roboto;
@@ -33,17 +34,19 @@ const Container = styled.div`
 
 const App = () => (
   <Container>
-    <Heading>
-      <a
-        target="_blank"
-        rel="noopener noreferrer"
-        href="https://github.com/tberghuis/trello-board-clone"
-      >
-        <img src={github} alt="Github" />
-      </a>
-      <span>Trello Board Clone</span>
-    </Heading>
-    <Board />
+    <ProjectProvider>
+      <Heading>
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          href="https://github.com/tberghuis/trello-board-clone"
+        >
+          <img src={github} alt="Github" />
+        </a>
+        <span>Trello Board Clone</span>
+      </Heading>
+      <Board />
+    </ProjectProvider>
   </Container>
 );
 

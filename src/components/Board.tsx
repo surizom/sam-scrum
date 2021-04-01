@@ -1,12 +1,12 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import React, { useState, useEffect } from "react";
+import React, { Dispatch, useContext } from "react";
 import styled from "styled-components";
 import { DragDropContext, Droppable, DropResult } from "react-beautiful-dnd";
-import { Subscription } from "rxjs";
 import { BoardData } from "../types/types";
 import List from "./List";
 import AddList from "./AddList";
-import { boardDataSubject, reorderListPosition, reorderCardPosition } from "../state/boardData";
+import { ProjectActionType, ProjectContext } from "../state/projectContext";
+import { ProjectAction } from "../state/constants";
 
 const BoardContainer = styled.div`
   white-space: nowrap;
@@ -15,7 +15,7 @@ const BoardContainer = styled.div`
   display: flex;
 `;
 
-const onDragEnd = (result: DropResult): void => {
+const onDragEnd = (dispatch: Dispatch<ProjectActionType>) => (result: DropResult): void => {
   // dropped nowhere
   if (!result.destination) {
     return;
@@ -28,21 +28,26 @@ const onDragEnd = (result: DropResult): void => {
   }
 
   if (result.type === "COLUMN") {
-    reorderListPosition(source.index, destination.index);
+    dispatch({
+      type: ProjectAction.REORDER_LIST_POSITION,
+      initialPosition: source.index,
+      finalPosition: destination.index,
+    });
     return;
   }
 
-  reorderCardPosition(source, destination, result.draggableId);
+  dispatch({
+    type: ProjectAction.REORDER_CARD_POSITION,
+    source,
+    destination,
+    cardId: result.draggableId,
+  });
 };
 
 const sortFn = (data: BoardData) => (a: string, b: string) => data[a].position - data[b].position;
 
 const Board = () => {
-  const [boardData, setBoardData] = useState<BoardData>();
-  useEffect(() => {
-    const sub: Subscription = boardDataSubject.subscribe((bd) => setBoardData(bd));
-    return () => sub.unsubscribe();
-  }, []);
+  const { boardData, dispatch } = useContext(ProjectContext);
 
   if (!boardData) {
     return <div>loading</div>;
@@ -60,7 +65,7 @@ const Board = () => {
   const listIds: string[] = Object.keys(boardData).sort(sortFn(boardData));
 
   return (
-    <DragDropContext onBeforeDragStart={onBeforeDragStart} onDragEnd={onDragEnd}>
+    <DragDropContext onBeforeDragStart={onBeforeDragStart} onDragEnd={onDragEnd(dispatch)}>
       <Droppable droppableId="board" type="COLUMN" direction="horizontal">
         {(provided) => (
           <BoardContainer ref={provided.innerRef} {...provided.droppableProps}>
