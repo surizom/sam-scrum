@@ -2,7 +2,7 @@ import "./css/reset.css";
 import "./css/global.css";
 import React from "react";
 import styled from "styled-components";
-import Project from "./components/Project";
+import Board from "./components/Board";
 import github from "./img/github.png";
 import { ProjectProvider } from "./state/projectContext";
 
@@ -45,7 +45,7 @@ const App = () => (
         </a>
         <span>Trello Board Clone</span>
       </Heading>
-      <Project />
+      <Board />
     </ProjectProvider>
   </Container>
 );

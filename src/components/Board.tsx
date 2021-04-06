@@ -8,7 +8,7 @@ import AddList from "./AddList";
 import { ProjectActionType, ProjectContext } from "../state/projectContext";
 import { ProjectAction } from "../state/constants";
 
-const ProjectContainer = styled.div`
+const BoardContainer = styled.div`
   white-space: nowrap;
   overflow-x: auto;
   height: 100%;
@@ -46,7 +46,7 @@ const onDragEnd = (dispatch: Dispatch<ProjectActionType>) => (result: DropResult
 
 const sortFn = (data: BoardData) => (a: string, b: string) => data[a].position - data[b].position;
 
-const Project = () => {
+const Board = () => {
   const { boardData, dispatch } = useContext(ProjectContext);
 
   if (!boardData) {
@@ -68,16 +68,16 @@ const Project = () => {
     <DragDropContext onBeforeDragStart={onBeforeDragStart} onDragEnd={onDragEnd(dispatch)}>
       <Droppable droppableId="board" type="COLUMN" direction="horizontal">
         {(provided) => (
-          <ProjectContainer ref={provided.innerRef} {...provided.droppableProps}>
+          <BoardContainer ref={provided.innerRef} {...provided.droppableProps}>
             {listIds.map((id) => (
               <List key={id} listId={id} listData={boardData[id]} />
             ))}
             {provided.placeholder}
             <AddList />
-          </ProjectContainer>
+          </BoardContainer>
         )}
       </Droppable>
     </DragDropContext>
   );
 };
-export default Project;
+export default Board;
