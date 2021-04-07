@@ -48,6 +48,7 @@ const AddCard = ({ listId }: AddCardProps) => {
   return (
     <Wrapper>
       <AutoSizeTextArea
+        isTitle={false}
         onSave={onSave}
         updateValue=""
         onBlur={cancel}

@@ -2,7 +2,7 @@ import { DraggableLocation } from "react-beautiful-dnd";
 import uuid from "uuidv4";
 import { omit } from "lodash";
 
-import { BoardData, Card, Cards, Column } from "../types/types";
+import { BoardData, SprintData, Card, Cards, Column } from "../types/types";
 
 const reorderUniqueListPosition = ({
   initialPosition,
@@ -45,12 +45,21 @@ export const reorderListPosition = (
   initialPosition: number,
   finalPosition: number
 ): BoardData => {
-  const newBoardData = Object.fromEntries(
-    Object.entries(boardData).map(([key, value]) => [
-      key,
-      reorderUniqueListPosition({ list: value, initialPosition, finalPosition }),
-    ])
-  );
+  const newBacklog = reorderUniqueListPosition({
+    list: boardData.backlog,
+    initialPosition,
+    finalPosition,
+  });
+  const newSprints = boardData.sprints.map((sprint, index) => {});
+  const newBoardData = {
+    backlog: reorderUniqueListPosition({ list: value, initialPosition, finalPosition }),
+    ...Object.fromEntries(
+      Object.entries(boardData).map(([key, value]) => [
+        key,
+        reorderUniqueListPosition({ list: value, initialPosition, finalPosition }),
+      ])
+    ),
+  };
 
   return newBoardData;
 };

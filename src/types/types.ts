@@ -10,6 +10,14 @@ export type Column = {
   position: number;
   cards: Cards;
 };
-export type BoardData = {
+export type Sprint = {
+  goals: string;
+  data: SprintData;
+};
+export type SprintData = {
   [id: string]: Column;
+};
+export type BoardData = {
+  backlog: Column;
+  sprints: Sprint[];
 };

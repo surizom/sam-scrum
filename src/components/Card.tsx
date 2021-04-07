@@ -27,8 +27,10 @@ const Delete = styled.div`
 `;
 
 const TextAreaWrapper = styled.div`
-  padding-top: 6px;
-  padding-bottom: 2px;
+  padding-top: 16px;
+  padding-bottom: 10px;
+  padding-right: 16px;
+  padding-left: 16px;
   /* padding-right: 36px; */
 `;
 
@@ -38,8 +40,8 @@ interface CardDraggableProps {
 
 const CardDraggable = styled.div<CardDraggableProps>`
   background-color: #fff;
-  border-radius: 3px;
-  box-shadow: ${(props) => (props.editMode ? "none" : "0 2px 4px rgba(2, 2, 2, 0.6)")};
+  border-radius: 4px;
+  box-shadow: ${(props) => (props.editMode ? "none" : "0px 2px 0px rgba(0, 0, 0, 0.2)")};
   margin-bottom: 8px;
   position: relative;
   &:hover ${Delete} {
@@ -85,6 +87,7 @@ const Card = ({ listId, cardId, cardData }: CardProps) => {
         >
           <TextAreaWrapper onClick={contentClick}>
             <AutoSizeTextArea
+              isTitle={false}
               placeholder=""
               onSave={onSave}
               updateValue={cardData.card_content}

@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import { Draggable, Droppable } from "react-beautiful-dnd";
 import Card from "./Card";
-import AddCard from "./AddCard";
+// import AddCard from "./AddCard";
 import ListTitle from "./ListTitle";
 import { Column, Cards } from "../types/types";
 
@@ -11,14 +11,15 @@ const ListWrapper = styled.div`
   &:first-child {
     margin-left: 8px;
   }
-  width: 272px;
+  width: 339px;
   display: inline-block;
-  flex: 0 0 272px;
+  flex: 0 0 339px;
   margin: 0 4px;
 `;
 const ListContent = styled.div`
-  background-color: #ebecf0;
-  border-radius: 3px;
+  background-color: #e3e4e6;
+  border-radius: 5px;
+  padding-bottom: 1px;
 `;
 
 const ListDroppable = styled.div`
@@ -65,7 +66,7 @@ const List = ({ listId, listData }: ListProps) => {
                 </ListDroppable>
               )}
             </Droppable>
-            <AddCard listId={listId} />
+            {/* <AddCard listId={listId} /> */}
           </ListContent>
         </ListWrapper>
       )}

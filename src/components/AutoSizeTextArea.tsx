@@ -3,13 +3,14 @@ import styled from "styled-components";
 
 interface TextAreaProps {
   readonly editMode: boolean;
+  readonly isTitle: boolean;
 }
 const TextArea = styled.textarea<TextAreaProps>`
   cursor: ${(props) => (props.editMode ? "text" : "pointer")};
-  height: auto;
+  text-align: ${(props) => (props.isTitle ? "center" : "start")};
+  color: ${(props) => (props.isTitle ? "#40506C" : "black")};
+  font-size: ${(props) => (props.isTitle ? "30px" : "inherit")};
   overflow-y: hidden;
-  margin: -4px 0;
-  padding: 4px 8px;
   border: none;
   resize: none;
   border-radius: 3px;
@@ -23,6 +24,7 @@ const TextArea = styled.textarea<TextAreaProps>`
 `;
 
 type AutoSizeTextAreaProps = {
+  isTitle: boolean;
   placeholder: string;
   editMode: boolean;
   onSave: (value: string) => void;
@@ -30,6 +32,7 @@ type AutoSizeTextAreaProps = {
   onBlur: (text: string) => void;
 };
 const AutoSizeTextArea = ({
+  isTitle,
   placeholder,
   editMode,
   onSave,
@@ -81,6 +84,7 @@ const AutoSizeTextArea = ({
       spellCheck="false"
       editMode={editMode}
       placeholder={placeholder}
+      isTitle={isTitle}
     />
   );
 };

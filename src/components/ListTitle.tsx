@@ -24,6 +24,7 @@ const Delete = styled.div`
 const Container = styled.div`
   position: relative;
   && {
+    justify-content: center;
     cursor: pointer;
   }
   &:hover ${Delete} {
@@ -32,11 +33,17 @@ const Container = styled.div`
 `;
 
 const TextAreaWrapper = styled.div`
-  padding: 10px 8px;
-  padding-right: 36px;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 30px;
+
+  padding-top: 16px;
+  padding-left: 12px;
+  padding-right: 12px;
+  padding-bottom: 12px;
 
   & textarea {
-    font-weight: 600;
+    font-weight: 700;
   }
 `;
 
@@ -81,6 +88,7 @@ const ListTitle = ({ setDragBlocking, dragHandleProps, listId, title }: ListTile
     <Container {...dragHandleProps}>
       <TextAreaWrapper onClick={titleClick}>
         <AutoSizeTextArea
+          isTitle
           placeholder=""
           onSave={onSave}
           updateValue={updateValue}
