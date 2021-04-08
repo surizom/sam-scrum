@@ -41,7 +41,11 @@ const Input = styled.input`
     outline: 0;
   }
 `;
-const AddList = () => {
+
+type AddListProps = {
+  sprintId: string;
+};
+const AddList = ({ sprintId }: AddListProps) => {
   const [compose, setCompose] = useState<boolean>(false);
   const [listTitle, setListTitle] = useState<string>("");
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -61,7 +65,7 @@ const AddList = () => {
   const onKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.keyCode === 13) {
       // e.preventDefault();
-      dispatch({ type: ProjectAction.ADD_LIST, listTitle });
+      dispatch({ type: ProjectAction.ADD_LIST, sprintId, listTitle });
       setListTitle("");
       setCompose(false);
     }
@@ -69,7 +73,7 @@ const AddList = () => {
 
   const onBlur = () => {
     if (listTitle.length > 0) {
-      dispatch({ type: ProjectAction.ADD_LIST, listTitle });
+      dispatch({ type: ProjectAction.ADD_LIST, sprintId, listTitle });
       setListTitle("");
     }
     setCompose(false);

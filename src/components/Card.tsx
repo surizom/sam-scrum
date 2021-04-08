@@ -48,17 +48,18 @@ const CardDraggable = styled.div<CardDraggableProps>`
 `;
 
 type CardProps = {
+  sprintId?: string;
   listId: string;
   cardId: string;
   cardData: CardType;
 };
-const Card = ({ listId, cardId, cardData }: CardProps) => {
+const Card = ({ listId, cardId, cardData, sprintId }: CardProps) => {
   const [editMode, setEditMode] = useState<boolean>(false);
 
   const { dispatch } = useContext(ProjectContext);
 
   const onSave = (content: string) => {
-    dispatch({ type: ProjectAction.UPDATE_CARD, listId, cardId, content });
+    dispatch({ type: ProjectAction.UPDATE_CARD, sprintId, listId, cardId, content });
     setEditMode(false);
   };
 
@@ -67,7 +68,7 @@ const Card = ({ listId, cardId, cardData }: CardProps) => {
   };
 
   const deleteClick = () => {
-    dispatch({ type: ProjectAction.DELETE_CARD, listId, cardId });
+    dispatch({ type: ProjectAction.DELETE_CARD, sprintId, listId, cardId });
   };
 
   return (

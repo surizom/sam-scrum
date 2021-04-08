@@ -45,11 +45,18 @@ const TextAreaWrapper = styled.div`
 type ListTileProps = {
   setDragBlocking: (dragBlocking: boolean) => void;
   dragHandleProps: HTMLAttributes<HTMLDivElement> | undefined;
+  sprintId: string;
   listId: string;
   title: string;
 };
 
-const ListTitle = ({ setDragBlocking, dragHandleProps, listId, title }: ListTileProps) => {
+const ListTitle = ({
+  setDragBlocking,
+  dragHandleProps,
+  sprintId,
+  listId,
+  title,
+}: ListTileProps) => {
   const [editMode, setEditMode] = useState<boolean>(false);
   const [updateValue, setUpdateValue] = useState<string>(title);
 
@@ -61,7 +68,7 @@ const ListTitle = ({ setDragBlocking, dragHandleProps, listId, title }: ListTile
       setUpdateValue("");
       setTimeout(() => setUpdateValue(title), 0);
     } else {
-      dispatch({ type: ProjectAction.UPDATE_LIST_TITLE, listId, listTitle: _title });
+      dispatch({ type: ProjectAction.UPDATE_LIST_TITLE, sprintId, listId, listTitle: _title });
     }
 
     setDragBlocking(false);
@@ -74,7 +81,7 @@ const ListTitle = ({ setDragBlocking, dragHandleProps, listId, title }: ListTile
   };
 
   const deleteClick = () => {
-    dispatch({ type: ProjectAction.DELETE_LIST, listId });
+    dispatch({ type: ProjectAction.DELETE_LIST, sprintId, listId });
   };
 
   return (

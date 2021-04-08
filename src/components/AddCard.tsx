@@ -20,10 +20,11 @@ const Wrapper = styled.div`
 `;
 
 type AddCardProps = {
+  sprintId?: string;
   listId: string;
 };
 
-const AddCard = ({ listId }: AddCardProps) => {
+const AddCard = ({ listId, sprintId }: AddCardProps) => {
   const [compose, setCompose] = useState<boolean>(false);
 
   const { dispatch } = useContext(ProjectContext);
@@ -37,7 +38,7 @@ const AddCard = ({ listId }: AddCardProps) => {
   }
 
   const onSave = (content: string) => {
-    dispatch({ type: ProjectAction.ADD_CARD, listId, content });
+    dispatch({ type: ProjectAction.ADD_CARD, sprintId, listId, content });
     setCompose(false);
   };
 

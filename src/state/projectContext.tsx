@@ -7,7 +7,6 @@ import {
   deleteCard,
   deleteList,
   reorderCardPosition,
-  reorderListPosition,
   updateCard,
   updateListTitle,
 } from "./boardDataReducers";
@@ -30,39 +29,58 @@ export const INITIAL_CONTEXT_VALUE: ProjectContextProps = {
 export const ProjectContext = createContext<ProjectContextProps>(INITIAL_CONTEXT_VALUE);
 
 export type ProjectActionType =
-  | { type: ProjectAction.REORDER_LIST_POSITION; initialPosition: number; finalPosition: number }
   | {
       type: ProjectAction.REORDER_CARD_POSITION;
       source: DraggableLocation;
       destination: DraggableLocation;
       cardId: string;
     }
-  | { type: ProjectAction.ADD_CARD; listId: string; content: string }
-  | { type: ProjectAction.UPDATE_CARD; listId: string; cardId: string; content: string }
-  | { type: ProjectAction.ADD_LIST; listTitle: string }
-  | { type: ProjectAction.DELETE_CARD; listId: string; cardId: string }
-  | { type: ProjectAction.DELETE_LIST; listId: string }
-  | { type: ProjectAction.UPDATE_LIST_TITLE; listId: string; listTitle: string };
+  | { type: ProjectAction.ADD_CARD; sprintId?: string; listId: string; content: string }
+  | {
+      type: ProjectAction.UPDATE_CARD;
+      sprintId?: string;
+      listId: string;
+      cardId: string;
+      content: string;
+    }
+  | { type: ProjectAction.ADD_LIST; sprintId: string; listTitle: string }
+  | { type: ProjectAction.DELETE_CARD; sprintId?: string; listId: string; cardId: string }
+  | { type: ProjectAction.DELETE_LIST; sprintId: string; listId: string }
+  | { type: ProjectAction.UPDATE_LIST_TITLE; sprintId: string; listId: string; listTitle: string };
 
 export const ProjectProvider: React.FC<Props> = ({ children }) => {
   function reducer(state: BoardData, action: ProjectActionType) {
     switch (action.type) {
-      case ProjectAction.REORDER_LIST_POSITION:
-        return reorderListPosition(state, action.initialPosition, action.finalPosition);
       case ProjectAction.REORDER_CARD_POSITION:
         return reorderCardPosition(state, action.source, action.destination, action.cardId);
       case ProjectAction.ADD_CARD:
-        return addCard(state, action.listId, action.content);
+        return addCard({
+          boardData: state,
+          sprintId: action.sprintId,
+          listId: action.listId,
+          content: action.content,
+        });
       case ProjectAction.UPDATE_CARD:
-        return updateCard(state, action.listId, action.cardId, action.content);
+        return updateCard({
+          boardData: state,
+          sprintId: action.sprintId,
+          listId: action.listId,
+          cardId: action.cardId,
+          content: action.content,
+        });
       case ProjectAction.ADD_LIST:
-        return addList(state, action.listTitle);
+        return addList(state, action.sprintId, action.listTitle);
       case ProjectAction.DELETE_LIST:
-        return deleteList(state, action.listId);
+        return deleteList(state, action.sprintId, action.listId);
       case ProjectAction.DELETE_CARD:
-        return deleteCard(state, action.listId, action.cardId);
+        return deleteCard({
+          boardData: state,
+          sprintId: action.sprintId,
+          listId: action.listId,
+          cardId: action.cardId,
+        });
       case ProjectAction.UPDATE_LIST_TITLE:
-        return updateListTitle(state, action.listId, action.listTitle);
+        return updateListTitle(state, action.sprintId, action.listId, action.listTitle);
       default:
         return state;
     }

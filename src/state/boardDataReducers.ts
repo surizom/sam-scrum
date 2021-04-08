@@ -1,59 +1,9 @@
+/* eslint-disable no-restricted-syntax */
 import { DraggableLocation } from "react-beautiful-dnd";
 import uuid from "uuidv4";
-import { omit } from "lodash";
+import { omit, cloneDeep } from "lodash";
 
 import { BoardData, Card, Cards, Column } from "../types/types";
-
-const reorderUniqueListPosition = ({
-  initialPosition,
-  finalPosition,
-  list,
-}: {
-  initialPosition: number;
-  finalPosition: number;
-  list: Column;
-}): Column => {
-  if (list.position === initialPosition) {
-    return {
-      ...list,
-      position: finalPosition,
-    };
-  }
-  if (
-    list.position < Math.min(initialPosition, finalPosition) ||
-    list.position > Math.max(initialPosition, finalPosition)
-  ) {
-    return {
-      ...list,
-    };
-  }
-  if (initialPosition < finalPosition) {
-    return {
-      ...list,
-      position: list.position - 1,
-    };
-  }
-  return {
-    ...list,
-    position: list.position + 1,
-  };
-};
-
-// TODO I should generalise this function (DRY)
-export const reorderListPosition = (
-  boardData: BoardData,
-  initialPosition: number,
-  finalPosition: number
-): BoardData => {
-  const newBoardData = Object.fromEntries(
-    Object.entries(boardData).map(([key, value]) => [
-      key,
-      reorderUniqueListPosition({ list: value, initialPosition, finalPosition }),
-    ])
-  );
-
-  return newBoardData;
-};
 
 const moveCardWithinSameList = ({
   sourceIndex,
@@ -88,6 +38,45 @@ const moveCardWithinSameList = ({
   };
 };
 
+type FindSprintIdReturnType =
+  | {
+      type: "SPRINT";
+      sprintId: string;
+      cards: Cards;
+    }
+  | {
+      type: "BACKLOG";
+      cards: Cards;
+    }
+  | {
+      type: "ERROR";
+    };
+
+const findSprintIdByColumnId = (boardData: BoardData, columnId: string): FindSprintIdReturnType => {
+  if (Object.keys(boardData.backlog).includes(columnId)) {
+    return {
+      type: "BACKLOG",
+      cards: boardData.backlog[columnId].cards,
+    };
+  }
+  for (const sprintId in boardData.sprints) {
+    if (Object.prototype.hasOwnProperty.call(boardData.sprints, sprintId)) {
+      const sprint = boardData.sprints[sprintId];
+      if (Object.keys(sprint.data).includes(columnId)) {
+        return {
+          type: "SPRINT",
+          sprintId,
+          cards: boardData.sprints[sprintId].data[columnId].cards,
+        };
+      }
+    }
+  }
+
+  return {
+    type: "ERROR",
+  };
+};
+
 export const reorderCardPosition = (
   boardData: BoardData,
   source: DraggableLocation,
@@ -96,7 +85,12 @@ export const reorderCardPosition = (
 ): BoardData => {
   // moving card within same list
   if (source.droppableId === destination.droppableId) {
-    const { cards } = boardData[source.droppableId];
+    const sprint = findSprintIdByColumnId(boardData, source.droppableId);
+    if (sprint.type === "ERROR") {
+      throw new Error("ColumnId not found in boardData");
+    }
+    const { cards } = sprint;
+
     const newCards = Object.fromEntries(
       Object.entries(cards).map(([key, value]) => [
         key,
@@ -107,18 +101,22 @@ export const reorderCardPosition = (
         }),
       ])
     );
-    const newBoardData = {
-      ...boardData,
-      [source.droppableId]: {
-        ...boardData[source.droppableId],
-        cards: newCards,
-      },
-    };
+    const newBoardData = cloneDeep(boardData);
+    if (sprint.type === "SPRINT") {
+      newBoardData.sprints[sprint.sprintId].data[source.droppableId].cards = newCards;
+    } else if (sprint.type === "BACKLOG") {
+      newBoardData.backlog[source.droppableId].cards = newCards;
+    }
+
     return newBoardData;
   }
-  // moving card between different lists
-  const sourceCards: Cards = Object.fromEntries(
-    Object.entries(boardData[source.droppableId].cards).map(([key, value]) => [
+  // moving card between different columns
+  const sourceSprint = findSprintIdByColumnId(boardData, source.droppableId);
+  if (sourceSprint.type === "ERROR") {
+    throw new Error("ColumnId not found in boardData");
+  }
+  const sourceCards = Object.fromEntries(
+    Object.entries(sourceSprint.cards).map(([key, value]) => [
       key,
       {
         ...value,
@@ -126,8 +124,13 @@ export const reorderCardPosition = (
       },
     ])
   );
-  const destinationCards: Cards = Object.fromEntries(
-    Object.entries(boardData[destination.droppableId].cards).map(([key, value]) => [
+
+  const destinationSprint = findSprintIdByColumnId(boardData, destination.droppableId);
+  if (destinationSprint.type === "ERROR") {
+    throw new Error("ColumnId not found in boardData");
+  }
+  const destinationCards = Object.fromEntries(
+    Object.entries(destinationSprint.cards).map(([key, value]) => [
       key,
       {
         ...value,
@@ -135,85 +138,139 @@ export const reorderCardPosition = (
       },
     ])
   );
+
   const movingCard: Card = {
-    ...boardData[source.droppableId].cards[cardId],
+    ...sourceCards[cardId],
     position: destination.index,
   };
 
-  const newBoardData = omit(
-    {
-      ...boardData,
-      [source.droppableId]: {
-        ...boardData[source.droppableId],
-        cards: sourceCards,
-      },
-      [destination.droppableId]: {
-        ...boardData[destination.droppableId],
-        cards: {
-          ...destinationCards,
-          [cardId]: movingCard,
-        },
-      },
-    },
-    [`${source.droppableId}.cards.${cardId}`]
-  );
+  const newBoardData = cloneDeep(boardData);
+
+  if (sourceSprint.type === "SPRINT") {
+    if (destinationSprint.type === "SPRINT") {
+      newBoardData.sprints[sourceSprint.sprintId].data[source.droppableId].cards = sourceCards;
+      newBoardData.sprints[destinationSprint.sprintId].data[
+        destination.droppableId
+      ].cards = destinationCards;
+      newBoardData.sprints[destinationSprint.sprintId].data[destination.droppableId].cards[
+        cardId
+      ] = movingCard;
+      delete newBoardData.sprints[sourceSprint.sprintId].data[source.droppableId].cards[cardId];
+    } else {
+      newBoardData.sprints[sourceSprint.sprintId].data[source.droppableId].cards = sourceCards;
+      newBoardData.backlog[destination.droppableId].cards = destinationCards;
+      newBoardData.backlog[destination.droppableId].cards[cardId] = movingCard;
+      delete newBoardData.sprints[sourceSprint.sprintId].data[source.droppableId].cards[cardId];
+    }
+  } else if (sourceSprint.type === "BACKLOG") {
+    if (destinationSprint.type === "SPRINT") {
+      newBoardData.backlog[source.droppableId].cards = sourceCards;
+      newBoardData.sprints[destinationSprint.sprintId].data[
+        destination.droppableId
+      ].cards = destinationCards;
+      newBoardData.sprints[destinationSprint.sprintId].data[destination.droppableId].cards[
+        cardId
+      ] = movingCard;
+      delete newBoardData.backlog[source.droppableId].cards[cardId];
+    } else {
+      newBoardData.backlog[source.droppableId].cards = sourceCards;
+      newBoardData.backlog[destination.droppableId].cards = destinationCards;
+      newBoardData.backlog[destination.droppableId].cards[cardId] = movingCard;
+      delete newBoardData.backlog[source.droppableId].cards[cardId];
+    }
+  }
 
   return newBoardData;
 };
 
-export const addCard = (boardData: BoardData, listId: string, content: string): BoardData => {
-  const listCards: Cards = boardData[listId].cards;
+export const addCard = ({
+  boardData,
+  sprintId,
+  listId,
+  content,
+}: {
+  boardData: BoardData;
+  sprintId?: string;
+  listId: string;
+  content: string;
+}): BoardData => {
+  const listCards: Cards =
+    sprintId === undefined
+      ? boardData.backlog[listId].cards
+      : boardData.sprints[sprintId].data[listId].cards;
   const position: number = Object.keys(listCards).length;
   const card: Card = { position, card_content: content };
   const newId = uuid();
-  return {
-    ...boardData,
-    [listId]: {
-      ...boardData[listId],
-      cards: {
-        ...boardData[listId].cards,
-        [newId]: card,
-      },
-    },
-  };
-};
 
-export const updateCard = (
-  boardData: BoardData,
-  listId: string,
-  cardId: string,
-  content: string
-): BoardData => ({
-  ...boardData,
-  [listId]: {
-    ...boardData[listId],
-    cards: {
-      ...boardData[listId].cards,
-      [cardId]: {
-        ...boardData[listId].cards[cardId],
-        card_content: content,
-      },
-    },
-  },
-});
-
-export const addList = (boardData: BoardData, listTitle: string): BoardData => {
-  const position: number = Object.keys(boardData).length;
-  const list: Column = { position, list_title: listTitle, cards: {} };
-  const newId = uuid();
-  const newBoardData = {
-    ...boardData,
-    [newId]: list,
-  };
+  const newBoardData = cloneDeep(boardData);
+  if (sprintId === undefined) {
+    newBoardData.backlog[listId].cards[newId] = card;
+  } else {
+    newBoardData.sprints[sprintId].data[listId].cards[newId] = card;
+  }
   return newBoardData;
 };
 
-export const updateListTitle = (boardData: BoardData, listId: string, listTitle: string) => {
-  const updatedList = { ...boardData[listId], listTitle };
-  return { ...boardData, [listId]: updatedList };
+export const updateCard = ({
+  boardData,
+  sprintId,
+  listId,
+  cardId,
+  content,
+}: {
+  boardData: BoardData;
+  sprintId?: string;
+  listId: string;
+  cardId: string;
+  content: string;
+}): BoardData => {
+  const newBoardData = cloneDeep(boardData);
+  if (sprintId === undefined) {
+    newBoardData.backlog[listId].cards[cardId].card_content = content;
+    return newBoardData;
+  }
+  newBoardData.sprints[sprintId].data[listId].cards[cardId].card_content = content;
+  return newBoardData;
 };
 
-export const deleteList = (boardData: BoardData, listId: string) => omit(boardData, [listId]);
+export const addList = (boardData: BoardData, sprintId: string, listTitle: string): BoardData => {
+  const position: number = Object.keys(boardData.sprints[sprintId].data).length;
+  const list: Column = { position, list_title: listTitle, cards: {} };
+  const newId = uuid();
 
-export const deleteCard = (boardData: BoardData, listId: string, cardId: string) =>
-  omit(boardData, [`${listId}.cards.${cardId}`]);
+  const newBoardData = cloneDeep(boardData);
+  newBoardData.sprints[sprintId].data[newId] = list;
+  return newBoardData;
+};
+
+export const updateListTitle = (
+  boardData: BoardData,
+  sprintId: string,
+  listId: string,
+  listTitle: string
+) => {
+  const newBoardData = cloneDeep(boardData);
+  newBoardData.sprints[sprintId].data[listId].list_title = listTitle;
+  return newBoardData;
+};
+
+export const deleteList = (boardData: BoardData, sprintId: string, listId: string) =>
+  omit(boardData, [`sprints.${sprintId}.data.${listId}`]) as BoardData;
+
+export const deleteCard = ({
+  boardData,
+  sprintId,
+  listId,
+  cardId,
+}: {
+  boardData: BoardData;
+  sprintId?: string;
+  listId: string;
+  cardId: string;
+}) => {
+  // if product backlog
+  if (sprintId === undefined) {
+    return omit(boardData, [`backlog.${listId}.cards.${cardId}`]) as BoardData;
+  }
+  return omit(boardData, [`sprints.${sprintId}.data.${listId}.cards.${cardId}`]) as BoardData;
+};

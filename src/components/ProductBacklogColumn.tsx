@@ -1,10 +1,9 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import React, { useState } from "react";
+import React from "react";
 import styled from "styled-components";
 import { Draggable, Droppable } from "react-beautiful-dnd";
 import Card from "./Card";
 import AddCard from "./AddCard";
-import ListTitle from "./ListTitle";
 import { Column, Cards } from "../types/types";
 
 const ListWrapper = styled.div`
@@ -27,57 +26,47 @@ const ListDroppable = styled.div`
   padding: 0 4px;
 `;
 
+const TextAreaWrapper = styled.div`
+  padding: 10px 8px;
+  padding-right: 36px;
+
+  & textarea {
+    font-weight: 600;
+  }
+`;
+
 const sortFn = (data: Cards) => (a: string, b: string) => data[a].position - data[b].position;
 
-type ListProps = {
+type ProductBackLogColumnProps = {
   listId: string;
   listData: Column;
-  sprintId: string;
 };
 
-const List = ({ listId, listData, sprintId }: ListProps) => {
+const ProductBackLogColumn = ({ listId, listData }: ProductBackLogColumnProps) => {
   const cardIds: string[] = Object.keys(listData.cards).sort(sortFn(listData.cards));
 
-  const [dragBlocking, setDragBlocking] = useState<boolean>(false);
-
   return (
-    <Draggable
-      disableInteractiveElementBlocking={!dragBlocking}
-      draggableId={listId}
-      index={listData.position}
-    >
+    <Draggable draggableId={listId} index={listData.position}>
       {(provided) => (
         <ListWrapper ref={provided.innerRef} {...provided.draggableProps}>
           <ListContent>
-            <ListTitle
-              sprintId={sprintId}
-              dragHandleProps={provided.dragHandleProps}
-              listId={listId}
-              title={listData.list_title}
-              setDragBlocking={setDragBlocking}
-            />
+            <TextAreaWrapper>Product backlog</TextAreaWrapper>
 
             <Droppable droppableId={listId}>
               {(droppableProvided) => (
                 <ListDroppable ref={droppableProvided.innerRef}>
                   {cardIds.map((id) => (
-                    <Card
-                      key={id}
-                      sprintId={sprintId}
-                      cardId={id}
-                      listId={listId}
-                      cardData={listData.cards[id]}
-                    />
+                    <Card key={id} cardId={id} listId={listId} cardData={listData.cards[id]} />
                   ))}
                   {droppableProvided.placeholder}
                 </ListDroppable>
               )}
             </Droppable>
-            <AddCard sprintId={sprintId} listId={listId} />
+            <AddCard listId={listId} />
           </ListContent>
         </ListWrapper>
       )}
     </Draggable>
   );
 };
-export default List;
+export default ProductBackLogColumn;
