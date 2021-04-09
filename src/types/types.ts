@@ -1,14 +1,14 @@
-export type Card = {
+export type Item = {
   position: number;
-  card_content: string;
+  item_content: string;
 };
-export type Cards = {
-  [id: string]: Card;
+export type Items = {
+  [id: string]: Item;
 };
 export type Column = {
   list_title: string;
   position: number;
-  cards: Cards;
+  items: Items;
 };
 export type Columns = {
   [id: string]: Column;
@@ -19,7 +19,7 @@ export type Sprint = {
   startDate: Date;
   endDate: Date;
 };
-export type BoardData = {
+export type ProjectData = {
   sprints: {
     [id: string]: Sprint;
   };

@@ -38,7 +38,7 @@ const AddItem = ({ listId, sprintId }: AddItemProps) => {
   }
 
   const onSave = (content: string) => {
-    dispatch({ type: ProjectAction.ADD_CARD, sprintId, listId, content });
+    dispatch({ type: ProjectAction.ADD_ITEM, sprintId, listId, content });
     setCompose(false);
   };
 

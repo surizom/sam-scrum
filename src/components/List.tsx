@@ -5,7 +5,7 @@ import { Draggable, Droppable } from "react-beautiful-dnd";
 import Item from "./Item";
 import AddItem from "./AddItem";
 import ListTitle from "./ListTitle";
-import { Column, Cards } from "../types/types";
+import { Column, Items } from "../types/types";
 
 const ListWrapper = styled.div`
   &:first-child {
@@ -27,7 +27,7 @@ const ListDroppable = styled.div`
   padding: 0 4px;
 `;
 
-const sortFn = (data: Cards) => (a: string, b: string) => data[a].position - data[b].position;
+const sortFn = (data: Items) => (a: string, b: string) => data[a].position - data[b].position;
 
 type ListProps = {
   listId: string;
@@ -36,7 +36,7 @@ type ListProps = {
 };
 
 const List = ({ listId, listData, sprintId }: ListProps) => {
-  const cardIds: string[] = Object.keys(listData.cards).sort(sortFn(listData.cards));
+  const itemIds: string[] = Object.keys(listData.items).sort(sortFn(listData.items));
 
   const [dragBlocking, setDragBlocking] = useState<boolean>(false);
 
@@ -60,13 +60,13 @@ const List = ({ listId, listData, sprintId }: ListProps) => {
             <Droppable droppableId={listId}>
               {(droppableProvided) => (
                 <ListDroppable ref={droppableProvided.innerRef}>
-                  {cardIds.map((id) => (
+                  {itemIds.map((id) => (
                     <Item
                       key={id}
                       sprintId={sprintId}
                       itemId={id}
                       listId={listId}
-                      itemData={listData.cards[id]}
+                      itemData={listData.items[id]}
                     />
                   ))}
                   {droppableProvided.placeholder}

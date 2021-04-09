@@ -40,8 +40,6 @@ const TextAreaWrapper = styled.div`
   }
 `;
 
-// Repeat my editcard form logic, stuff abstracting to DRY
-
 type ListTileProps = {
   setDragBlocking: (dragBlocking: boolean) => void;
   dragHandleProps: HTMLAttributes<HTMLDivElement> | undefined;

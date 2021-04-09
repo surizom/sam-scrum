@@ -1,28 +1,28 @@
 import React, { createContext, ReactNode, useReducer } from "react";
 import { DraggableLocation } from "react-beautiful-dnd";
-import { BoardData } from "../types/types";
+import { ProjectData } from "../types/types";
 import {
-  addCard,
+  addItem,
   addList,
-  deleteCard,
+  deleteItem,
   deleteList,
-  reorderCardPosition,
-  updateCard,
+  reorderItemPosition,
+  updateItem,
   updateListTitle,
 } from "./boardDataReducers";
-import { INITIAL_BOARD_DATA, ProjectAction } from "./constants";
+import { INITIAL_PROJECT_DATA, ProjectAction } from "./constants";
 
 interface Props {
   children?: ReactNode;
 }
 
 interface ProjectContextProps {
-  boardData: BoardData;
+  projectData: ProjectData;
   dispatch: React.Dispatch<ProjectActionType>;
 }
 
 export const INITIAL_CONTEXT_VALUE: ProjectContextProps = {
-  boardData: INITIAL_BOARD_DATA,
+  projectData: INITIAL_PROJECT_DATA,
   dispatch: () => null,
 };
 
@@ -30,39 +30,39 @@ export const ProjectContext = createContext<ProjectContextProps>(INITIAL_CONTEXT
 
 export type ProjectActionType =
   | {
-      type: ProjectAction.REORDER_CARD_POSITION;
+      type: ProjectAction.REORDER_ITEM_POSITION;
       source: DraggableLocation;
       destination: DraggableLocation;
       itemId: string;
     }
-  | { type: ProjectAction.ADD_CARD; sprintId?: string; listId: string; content: string }
+  | { type: ProjectAction.ADD_ITEM; sprintId?: string; listId: string; content: string }
   | {
-      type: ProjectAction.UPDATE_CARD;
+      type: ProjectAction.UPDATE_ITEM;
       sprintId?: string;
       listId: string;
       itemId: string;
       content: string;
     }
   | { type: ProjectAction.ADD_LIST; sprintId: string; listTitle: string }
-  | { type: ProjectAction.DELETE_CARD; sprintId?: string; listId: string; itemId: string }
+  | { type: ProjectAction.DELETE_ITEM; sprintId?: string; listId: string; itemId: string }
   | { type: ProjectAction.DELETE_LIST; sprintId: string; listId: string }
   | { type: ProjectAction.UPDATE_LIST_TITLE; sprintId: string; listId: string; listTitle: string };
 
 export const ProjectProvider: React.FC<Props> = ({ children }) => {
-  function reducer(state: BoardData, action: ProjectActionType) {
+  function reducer(state: ProjectData, action: ProjectActionType) {
     switch (action.type) {
-      case ProjectAction.REORDER_CARD_POSITION:
-        return reorderCardPosition(state, action.source, action.destination, action.itemId);
-      case ProjectAction.ADD_CARD:
-        return addCard({
-          boardData: state,
+      case ProjectAction.REORDER_ITEM_POSITION:
+        return reorderItemPosition(state, action.source, action.destination, action.itemId);
+      case ProjectAction.ADD_ITEM:
+        return addItem({
+          projectData: state,
           sprintId: action.sprintId,
           listId: action.listId,
           content: action.content,
         });
-      case ProjectAction.UPDATE_CARD:
-        return updateCard({
-          boardData: state,
+      case ProjectAction.UPDATE_ITEM:
+        return updateItem({
+          projectData: state,
           sprintId: action.sprintId,
           listId: action.listId,
           itemId: action.itemId,
@@ -72,9 +72,9 @@ export const ProjectProvider: React.FC<Props> = ({ children }) => {
         return addList(state, action.sprintId, action.listTitle);
       case ProjectAction.DELETE_LIST:
         return deleteList(state, action.sprintId, action.listId);
-      case ProjectAction.DELETE_CARD:
-        return deleteCard({
-          boardData: state,
+      case ProjectAction.DELETE_ITEM:
+        return deleteItem({
+          projectData: state,
           sprintId: action.sprintId,
           listId: action.listId,
           itemId: action.itemId,
@@ -86,9 +86,9 @@ export const ProjectProvider: React.FC<Props> = ({ children }) => {
     }
   }
 
-  const [boardData, dispatch] = useReducer(reducer, INITIAL_CONTEXT_VALUE.boardData);
+  const [projectData, dispatch] = useReducer(reducer, INITIAL_CONTEXT_VALUE.projectData);
 
   return (
-    <ProjectContext.Provider value={{ boardData, dispatch }}>{children}</ProjectContext.Provider>
+    <ProjectContext.Provider value={{ projectData, dispatch }}>{children}</ProjectContext.Provider>
   );
 };

@@ -3,38 +3,38 @@ import { DraggableLocation } from "react-beautiful-dnd";
 import uuid from "uuidv4";
 import { omit, cloneDeep } from "lodash";
 
-import { BoardData, Card, Cards, Column } from "../types/types";
+import { ProjectData, Item, Items, Column } from "../types/types";
 
-const moveCardWithinSameList = ({
+const moveItemWithinSameList = ({
   sourceIndex,
   destinationIndex,
-  card,
+  item,
 }: {
   sourceIndex: number;
   destinationIndex: number;
-  card: Card;
-}): Card => {
-  if (card.position === sourceIndex) {
+  item: Item;
+}): Item => {
+  if (item.position === sourceIndex) {
     return {
-      ...card,
+      ...item,
       position: destinationIndex,
     };
   }
   if (
-    card.position < Math.min(sourceIndex, destinationIndex) ||
-    card.position > Math.max(sourceIndex, destinationIndex)
+    item.position < Math.min(sourceIndex, destinationIndex) ||
+    item.position > Math.max(sourceIndex, destinationIndex)
   ) {
-    return card;
+    return item;
   }
   if (sourceIndex < destinationIndex) {
     return {
-      ...card,
-      position: card.position - 1,
+      ...item,
+      position: item.position - 1,
     };
   }
   return {
-    ...card,
-    position: card.position + 1,
+    ...item,
+    position: item.position + 1,
   };
 };
 
@@ -42,31 +42,34 @@ type FindSprintIdReturnType =
   | {
       type: "SPRINT";
       sprintId: string;
-      cards: Cards;
+      items: Items;
     }
   | {
       type: "BACKLOG";
-      cards: Cards;
+      items: Items;
     }
   | {
       type: "ERROR";
     };
 
-const findSprintIdByColumnId = (boardData: BoardData, columnId: string): FindSprintIdReturnType => {
-  if (Object.keys(boardData.backlog).includes(columnId)) {
+const findSprintIdByColumnId = (
+  projectData: ProjectData,
+  columnId: string
+): FindSprintIdReturnType => {
+  if (Object.keys(projectData.backlog).includes(columnId)) {
     return {
       type: "BACKLOG",
-      cards: boardData.backlog[columnId].cards,
+      items: projectData.backlog[columnId].items,
     };
   }
-  for (const sprintId in boardData.sprints) {
-    if (Object.prototype.hasOwnProperty.call(boardData.sprints, sprintId)) {
-      const sprint = boardData.sprints[sprintId];
+  for (const sprintId in projectData.sprints) {
+    if (Object.prototype.hasOwnProperty.call(projectData.sprints, sprintId)) {
+      const sprint = projectData.sprints[sprintId];
       if (Object.keys(sprint.data).includes(columnId)) {
         return {
           type: "SPRINT",
           sprintId,
-          cards: boardData.sprints[sprintId].data[columnId].cards,
+          items: projectData.sprints[sprintId].data[columnId].items,
         };
       }
     }
@@ -77,46 +80,46 @@ const findSprintIdByColumnId = (boardData: BoardData, columnId: string): FindSpr
   };
 };
 
-export const reorderCardPosition = (
-  boardData: BoardData,
+export const reorderItemPosition = (
+  projectData: ProjectData,
   source: DraggableLocation,
   destination: DraggableLocation,
-  cardId: string
-): BoardData => {
-  // moving card within same list
+  itemId: string
+): ProjectData => {
+  // moving item within same list
   if (source.droppableId === destination.droppableId) {
-    const sprint = findSprintIdByColumnId(boardData, source.droppableId);
+    const sprint = findSprintIdByColumnId(projectData, source.droppableId);
     if (sprint.type === "ERROR") {
-      throw new Error("ColumnId not found in boardData");
+      throw new Error("ColumnId not found in projectData");
     }
-    const { cards } = sprint;
+    const { items } = sprint;
 
-    const newCards = Object.fromEntries(
-      Object.entries(cards).map(([key, value]) => [
+    const newItems = Object.fromEntries(
+      Object.entries(items).map(([key, value]) => [
         key,
-        moveCardWithinSameList({
-          card: value,
+        moveItemWithinSameList({
+          item: value,
           sourceIndex: source.index,
           destinationIndex: destination.index,
         }),
       ])
     );
-    const newBoardData = cloneDeep(boardData);
+    const newProjectData = cloneDeep(projectData);
     if (sprint.type === "SPRINT") {
-      newBoardData.sprints[sprint.sprintId].data[source.droppableId].cards = newCards;
+      newProjectData.sprints[sprint.sprintId].data[source.droppableId].items = newItems;
     } else if (sprint.type === "BACKLOG") {
-      newBoardData.backlog[source.droppableId].cards = newCards;
+      newProjectData.backlog[source.droppableId].items = newItems;
     }
 
-    return newBoardData;
+    return newProjectData;
   }
-  // moving card between different columns
-  const sourceSprint = findSprintIdByColumnId(boardData, source.droppableId);
+  // moving item between different columns
+  const sourceSprint = findSprintIdByColumnId(projectData, source.droppableId);
   if (sourceSprint.type === "ERROR") {
-    throw new Error("ColumnId not found in boardData");
+    throw new Error("ColumnId not found in projectData");
   }
-  const sourceCards = Object.fromEntries(
-    Object.entries(sourceSprint.cards).map(([key, value]) => [
+  const sourceItems = Object.fromEntries(
+    Object.entries(sourceSprint.items).map(([key, value]) => [
       key,
       {
         ...value,
@@ -125,12 +128,12 @@ export const reorderCardPosition = (
     ])
   );
 
-  const destinationSprint = findSprintIdByColumnId(boardData, destination.droppableId);
+  const destinationSprint = findSprintIdByColumnId(projectData, destination.droppableId);
   if (destinationSprint.type === "ERROR") {
-    throw new Error("ColumnId not found in boardData");
+    throw new Error("ColumnId not found in projectData");
   }
-  const destinationCards = Object.fromEntries(
-    Object.entries(destinationSprint.cards).map(([key, value]) => [
+  const destinationItems = Object.fromEntries(
+    Object.entries(destinationSprint.items).map(([key, value]) => [
       key,
       {
         ...value,
@@ -139,138 +142,142 @@ export const reorderCardPosition = (
     ])
   );
 
-  const movingCard: Card = {
-    ...sourceCards[cardId],
+  const movingItem: Item = {
+    ...sourceItems[itemId],
     position: destination.index,
   };
 
-  const newBoardData = cloneDeep(boardData);
+  const newProjectData = cloneDeep(projectData);
 
   if (sourceSprint.type === "SPRINT") {
     if (destinationSprint.type === "SPRINT") {
-      newBoardData.sprints[sourceSprint.sprintId].data[source.droppableId].cards = sourceCards;
-      newBoardData.sprints[destinationSprint.sprintId].data[
+      newProjectData.sprints[sourceSprint.sprintId].data[source.droppableId].items = sourceItems;
+      newProjectData.sprints[destinationSprint.sprintId].data[
         destination.droppableId
-      ].cards = destinationCards;
-      newBoardData.sprints[destinationSprint.sprintId].data[destination.droppableId].cards[
-        cardId
-      ] = movingCard;
-      delete newBoardData.sprints[sourceSprint.sprintId].data[source.droppableId].cards[cardId];
+      ].items = destinationItems;
+      newProjectData.sprints[destinationSprint.sprintId].data[destination.droppableId].items[
+        itemId
+      ] = movingItem;
+      delete newProjectData.sprints[sourceSprint.sprintId].data[source.droppableId].items[itemId];
     } else {
-      newBoardData.sprints[sourceSprint.sprintId].data[source.droppableId].cards = sourceCards;
-      newBoardData.backlog[destination.droppableId].cards = destinationCards;
-      newBoardData.backlog[destination.droppableId].cards[cardId] = movingCard;
-      delete newBoardData.sprints[sourceSprint.sprintId].data[source.droppableId].cards[cardId];
+      newProjectData.sprints[sourceSprint.sprintId].data[source.droppableId].items = sourceItems;
+      newProjectData.backlog[destination.droppableId].items = destinationItems;
+      newProjectData.backlog[destination.droppableId].items[itemId] = movingItem;
+      delete newProjectData.sprints[sourceSprint.sprintId].data[source.droppableId].items[itemId];
     }
   } else if (sourceSprint.type === "BACKLOG") {
     if (destinationSprint.type === "SPRINT") {
-      newBoardData.backlog[source.droppableId].cards = sourceCards;
-      newBoardData.sprints[destinationSprint.sprintId].data[
+      newProjectData.backlog[source.droppableId].items = sourceItems;
+      newProjectData.sprints[destinationSprint.sprintId].data[
         destination.droppableId
-      ].cards = destinationCards;
-      newBoardData.sprints[destinationSprint.sprintId].data[destination.droppableId].cards[
-        cardId
-      ] = movingCard;
-      delete newBoardData.backlog[source.droppableId].cards[cardId];
+      ].items = destinationItems;
+      newProjectData.sprints[destinationSprint.sprintId].data[destination.droppableId].items[
+        itemId
+      ] = movingItem;
+      delete newProjectData.backlog[source.droppableId].items[itemId];
     } else {
-      newBoardData.backlog[source.droppableId].cards = sourceCards;
-      newBoardData.backlog[destination.droppableId].cards = destinationCards;
-      newBoardData.backlog[destination.droppableId].cards[cardId] = movingCard;
-      delete newBoardData.backlog[source.droppableId].cards[cardId];
+      newProjectData.backlog[source.droppableId].items = sourceItems;
+      newProjectData.backlog[destination.droppableId].items = destinationItems;
+      newProjectData.backlog[destination.droppableId].items[itemId] = movingItem;
+      delete newProjectData.backlog[source.droppableId].items[itemId];
     }
   }
 
-  return newBoardData;
+  return newProjectData;
 };
 
-export const addCard = ({
-  boardData,
+export const addItem = ({
+  projectData,
   sprintId,
   listId,
   content,
 }: {
-  boardData: BoardData;
+  projectData: ProjectData;
   sprintId?: string;
   listId: string;
   content: string;
-}): BoardData => {
-  const listCards: Cards =
+}): ProjectData => {
+  const listItems: Items =
     sprintId === undefined
-      ? boardData.backlog[listId].cards
-      : boardData.sprints[sprintId].data[listId].cards;
-  const position: number = Object.keys(listCards).length;
-  const card: Card = { position, card_content: content };
+      ? projectData.backlog[listId].items
+      : projectData.sprints[sprintId].data[listId].items;
+  const position: number = Object.keys(listItems).length;
+  const item: Item = { position, item_content: content };
   const newId = uuid();
 
-  const newBoardData = cloneDeep(boardData);
+  const newProjectData = cloneDeep(projectData);
   if (sprintId === undefined) {
-    newBoardData.backlog[listId].cards[newId] = card;
+    newProjectData.backlog[listId].items[newId] = item;
   } else {
-    newBoardData.sprints[sprintId].data[listId].cards[newId] = card;
+    newProjectData.sprints[sprintId].data[listId].items[newId] = item;
   }
-  return newBoardData;
+  return newProjectData;
 };
 
-export const updateCard = ({
-  boardData,
+export const updateItem = ({
+  projectData,
   sprintId,
   listId,
   itemId,
   content,
 }: {
-  boardData: BoardData;
+  projectData: ProjectData;
   sprintId?: string;
   listId: string;
   itemId: string;
   content: string;
-}): BoardData => {
-  const newBoardData = cloneDeep(boardData);
+}): ProjectData => {
+  const newItemData = cloneDeep(projectData);
   if (sprintId === undefined) {
-    newBoardData.backlog[listId].cards[itemId].card_content = content;
-    return newBoardData;
+    newItemData.backlog[listId].items[itemId].item_content = content;
+    return newItemData;
   }
-  newBoardData.sprints[sprintId].data[listId].cards[itemId].card_content = content;
-  return newBoardData;
+  newItemData.sprints[sprintId].data[listId].items[itemId].item_content = content;
+  return newItemData;
 };
 
-export const addList = (boardData: BoardData, sprintId: string, listTitle: string): BoardData => {
-  const position: number = Object.keys(boardData.sprints[sprintId].data).length;
-  const list: Column = { position, list_title: listTitle, cards: {} };
+export const addList = (
+  projectData: ProjectData,
+  sprintId: string,
+  listTitle: string
+): ProjectData => {
+  const position: number = Object.keys(projectData.sprints[sprintId].data).length;
+  const list: Column = { position, list_title: listTitle, items: {} };
   const newId = uuid();
 
-  const newBoardData = cloneDeep(boardData);
+  const newBoardData = cloneDeep(projectData);
   newBoardData.sprints[sprintId].data[newId] = list;
   return newBoardData;
 };
 
 export const updateListTitle = (
-  boardData: BoardData,
+  projectData: ProjectData,
   sprintId: string,
   listId: string,
   listTitle: string
 ) => {
-  const newBoardData = cloneDeep(boardData);
+  const newBoardData = cloneDeep(projectData);
   newBoardData.sprints[sprintId].data[listId].list_title = listTitle;
   return newBoardData;
 };
 
-export const deleteList = (boardData: BoardData, sprintId: string, listId: string) =>
-  omit(boardData, [`sprints.${sprintId}.data.${listId}`]) as BoardData;
+export const deleteList = (projectData: ProjectData, sprintId: string, listId: string) =>
+  omit(projectData, [`sprints.${sprintId}.data.${listId}`]) as ProjectData;
 
-export const deleteCard = ({
-  boardData,
+export const deleteItem = ({
+  projectData,
   sprintId,
   listId,
   itemId,
 }: {
-  boardData: BoardData;
+  projectData: ProjectData;
   sprintId?: string;
   listId: string;
   itemId: string;
 }) => {
   // if product backlog
   if (sprintId === undefined) {
-    return omit(boardData, [`backlog.${listId}.cards.${itemId}`]) as BoardData;
+    return omit(projectData, [`backlog.${listId}.items.${itemId}`]) as ProjectData;
   }
-  return omit(boardData, [`sprints.${sprintId}.data.${listId}.cards.${itemId}`]) as BoardData;
+  return omit(projectData, [`sprints.${sprintId}.data.${listId}.items.${itemId}`]) as ProjectData;
 };

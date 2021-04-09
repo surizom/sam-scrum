@@ -2,12 +2,10 @@
 import React, { useContext, useState } from "react";
 import styled from "styled-components";
 import { Draggable } from "react-beautiful-dnd";
-import { Card as CardType } from "../types/types";
+import { Item as ItemType } from "../types/types";
 import AutoSizeTextArea from "./AutoSizeTextArea";
 import { ProjectContext } from "../state/projectContext";
 import { ProjectAction } from "../state/constants";
-
-// TODO refactor so code shared title and content
 
 const Delete = styled.div`
   position: absolute;
@@ -51,7 +49,7 @@ type ItemProps = {
   sprintId?: string;
   listId: string;
   itemId: string;
-  itemData: CardType;
+  itemData: ItemType;
 };
 const Item = ({ listId, itemId, itemData, sprintId }: ItemProps) => {
   const [editMode, setEditMode] = useState<boolean>(false);
@@ -59,7 +57,7 @@ const Item = ({ listId, itemId, itemData, sprintId }: ItemProps) => {
   const { dispatch } = useContext(ProjectContext);
 
   const onSave = (content: string) => {
-    dispatch({ type: ProjectAction.UPDATE_CARD, sprintId, listId, itemId, content });
+    dispatch({ type: ProjectAction.UPDATE_ITEM, sprintId, listId, itemId, content });
     setEditMode(false);
   };
 
@@ -68,7 +66,7 @@ const Item = ({ listId, itemId, itemData, sprintId }: ItemProps) => {
   };
 
   const deleteClick = () => {
-    dispatch({ type: ProjectAction.DELETE_CARD, sprintId, listId, itemId });
+    dispatch({ type: ProjectAction.DELETE_ITEM, sprintId, listId, itemId });
   };
 
   return (
@@ -88,7 +86,7 @@ const Item = ({ listId, itemId, itemData, sprintId }: ItemProps) => {
             <AutoSizeTextArea
               placeholder=""
               onSave={onSave}
-              updateValue={itemData.card_content}
+              updateValue={itemData.item_content}
               // should i cancel???
               onBlur={onSave}
               editMode={editMode}

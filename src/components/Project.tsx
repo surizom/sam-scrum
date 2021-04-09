@@ -37,7 +37,7 @@ const onDragEnd = (dispatch: Dispatch<ProjectActionType>) => (result: DropResult
   }
 
   dispatch({
-    type: ProjectAction.REORDER_CARD_POSITION,
+    type: ProjectAction.REORDER_ITEM_POSITION,
     source,
     destination,
     itemId: result.draggableId,
@@ -45,9 +45,9 @@ const onDragEnd = (dispatch: Dispatch<ProjectActionType>) => (result: DropResult
 };
 
 const Project = () => {
-  const { boardData, dispatch } = useContext(ProjectContext);
+  const { projectData, dispatch } = useContext(ProjectContext);
 
-  if (!boardData) {
+  if (!projectData) {
     return <div>loading</div>;
   }
 
@@ -60,8 +60,8 @@ const Project = () => {
     }
   };
 
-  const sprintIds: string[] = Object.keys(boardData.sprints);
-  const backlogIds: string[] = Object.keys(boardData.backlog);
+  const sprintIds: string[] = Object.keys(projectData.sprints);
+  const backlogIds: string[] = Object.keys(projectData.backlog);
 
   return (
     <DragDropContext onBeforeDragStart={onBeforeDragStart} onDragEnd={onDragEnd(dispatch)}>
@@ -72,7 +72,7 @@ const Project = () => {
               <ProductBackLogColumn
                 key={backlogId}
                 listId={backlogId}
-                listData={boardData.backlog[backlogId]}
+                listData={projectData.backlog[backlogId]}
               />
             ))}
 

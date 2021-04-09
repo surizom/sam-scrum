@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { Draggable, Droppable } from "react-beautiful-dnd";
 import Item from "./Item";
 import AddItem from "./AddItem";
-import { Column, Cards } from "../types/types";
+import { Column, Items } from "../types/types";
 
 const ListWrapper = styled.div`
   &:first-child {
@@ -35,7 +35,7 @@ const TextAreaWrapper = styled.div`
   }
 `;
 
-const sortFn = (data: Cards) => (a: string, b: string) => data[a].position - data[b].position;
+const sortFn = (data: Items) => (a: string, b: string) => data[a].position - data[b].position;
 
 type ProductBackLogColumnProps = {
   listId: string;
@@ -43,7 +43,7 @@ type ProductBackLogColumnProps = {
 };
 
 const ProductBackLogColumn = ({ listId, listData }: ProductBackLogColumnProps) => {
-  const cardIds: string[] = Object.keys(listData.cards).sort(sortFn(listData.cards));
+  const itemIds: string[] = Object.keys(listData.items).sort(sortFn(listData.items));
 
   return (
     <Draggable draggableId={listId} index={listData.position}>
@@ -55,8 +55,8 @@ const ProductBackLogColumn = ({ listId, listData }: ProductBackLogColumnProps) =
             <Droppable droppableId={listId}>
               {(droppableProvided) => (
                 <ListDroppable ref={droppableProvided.innerRef}>
-                  {cardIds.map((id) => (
-                    <Item key={id} itemId={id} listId={listId} itemData={listData.cards[id]} />
+                  {itemIds.map((id) => (
+                    <Item key={id} itemId={id} listId={listId} itemData={listData.items[id]} />
                   ))}
                   {droppableProvided.placeholder}
                 </ListDroppable>
