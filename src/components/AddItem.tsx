@@ -19,12 +19,12 @@ const Wrapper = styled.div`
   padding: 8px;
 `;
 
-type AddCardProps = {
+type AddItemProps = {
   sprintId?: string;
   listId: string;
 };
 
-const AddCard = ({ listId, sprintId }: AddCardProps) => {
+const AddItem = ({ listId, sprintId }: AddItemProps) => {
   const [compose, setCompose] = useState<boolean>(false);
 
   const { dispatch } = useContext(ProjectContext);
@@ -32,7 +32,7 @@ const AddCard = ({ listId, sprintId }: AddCardProps) => {
   if (!compose) {
     return (
       <Button onClick={() => setCompose(true)}>
-        <span className="trellicons">&#xE901;</span> <span>Add another card</span>
+        <span className="trellicons">&#xE901;</span> <span>Add another item</span>
       </Button>
     );
   }
@@ -53,9 +53,9 @@ const AddCard = ({ listId, sprintId }: AddCardProps) => {
         updateValue=""
         onBlur={cancel}
         editMode
-        placeholder="Enter a title for this card…"
+        placeholder="Enter a title for this item…"
       />
     </Wrapper>
   );
 };
-export default AddCard;
+export default AddItem;

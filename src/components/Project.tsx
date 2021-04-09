@@ -7,7 +7,7 @@ import { ProjectAction } from "../state/constants";
 import ProductBackLogColumn from "./ProductBacklogColumn";
 import Sprint from "./Sprint";
 
-const BoardContainer = styled.div`
+const ProjectContainer = styled.div`
   white-space: nowrap;
   overflow-x: auto;
   height: 100%;
@@ -40,11 +40,11 @@ const onDragEnd = (dispatch: Dispatch<ProjectActionType>) => (result: DropResult
     type: ProjectAction.REORDER_CARD_POSITION,
     source,
     destination,
-    cardId: result.draggableId,
+    itemId: result.draggableId,
   });
 };
 
-const Board = () => {
+const Project = () => {
   const { boardData, dispatch } = useContext(ProjectContext);
 
   if (!boardData) {
@@ -67,7 +67,7 @@ const Board = () => {
     <DragDropContext onBeforeDragStart={onBeforeDragStart} onDragEnd={onDragEnd(dispatch)}>
       <Droppable droppableId="board" type="COLUMN" direction="horizontal">
         {(provided) => (
-          <BoardContainer ref={provided.innerRef} {...provided.droppableProps}>
+          <ProjectContainer ref={provided.innerRef} {...provided.droppableProps}>
             {backlogIds.map((backlogId) => (
               <ProductBackLogColumn
                 key={backlogId}
@@ -80,10 +80,10 @@ const Board = () => {
               <Sprint sprintId={sprintId} />
             ))}
             {provided.placeholder}
-          </BoardContainer>
+          </ProjectContainer>
         )}
       </Droppable>
     </DragDropContext>
   );
 };
-export default Board;
+export default Project;

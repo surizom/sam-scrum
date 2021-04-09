@@ -32,11 +32,11 @@ const TextAreaWrapper = styled.div`
   /* padding-right: 36px; */
 `;
 
-interface CardDraggableProps {
+interface ItemDraggableProps {
   readonly editMode: boolean;
 }
 
-const CardDraggable = styled.div<CardDraggableProps>`
+const ItemDraggable = styled.div<ItemDraggableProps>`
   background-color: #fff;
   border-radius: 3px;
   box-shadow: ${(props) => (props.editMode ? "none" : "0 2px 4px rgba(2, 2, 2, 0.6)")};
@@ -47,19 +47,19 @@ const CardDraggable = styled.div<CardDraggableProps>`
   }
 `;
 
-type CardProps = {
+type ItemProps = {
   sprintId?: string;
   listId: string;
-  cardId: string;
-  cardData: CardType;
+  itemId: string;
+  itemData: CardType;
 };
-const Card = ({ listId, cardId, cardData, sprintId }: CardProps) => {
+const Item = ({ listId, itemId, itemData, sprintId }: ItemProps) => {
   const [editMode, setEditMode] = useState<boolean>(false);
 
   const { dispatch } = useContext(ProjectContext);
 
   const onSave = (content: string) => {
-    dispatch({ type: ProjectAction.UPDATE_CARD, sprintId, listId, cardId, content });
+    dispatch({ type: ProjectAction.UPDATE_CARD, sprintId, listId, itemId, content });
     setEditMode(false);
   };
 
@@ -68,17 +68,17 @@ const Card = ({ listId, cardId, cardData, sprintId }: CardProps) => {
   };
 
   const deleteClick = () => {
-    dispatch({ type: ProjectAction.DELETE_CARD, sprintId, listId, cardId });
+    dispatch({ type: ProjectAction.DELETE_CARD, sprintId, listId, itemId });
   };
 
   return (
     <Draggable
-      draggableId={cardId}
-      index={cardData.position}
+      draggableId={itemId}
+      index={itemData.position}
       disableInteractiveElementBlocking={!editMode}
     >
       {(draggableProvided) => (
-        <CardDraggable
+        <ItemDraggable
           ref={draggableProvided.innerRef}
           {...draggableProvided.draggableProps}
           {...draggableProvided.dragHandleProps}
@@ -88,7 +88,7 @@ const Card = ({ listId, cardId, cardData, sprintId }: CardProps) => {
             <AutoSizeTextArea
               placeholder=""
               onSave={onSave}
-              updateValue={cardData.card_content}
+              updateValue={itemData.card_content}
               // should i cancel???
               onBlur={onSave}
               editMode={editMode}
@@ -96,9 +96,9 @@ const Card = ({ listId, cardId, cardData, sprintId }: CardProps) => {
           </TextAreaWrapper>
 
           <Delete onClick={deleteClick}>&#xE918;</Delete>
-        </CardDraggable>
+        </ItemDraggable>
       )}
     </Draggable>
   );
 };
-export default Card;
+export default Item;

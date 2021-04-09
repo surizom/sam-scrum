@@ -33,18 +33,18 @@ export type ProjectActionType =
       type: ProjectAction.REORDER_CARD_POSITION;
       source: DraggableLocation;
       destination: DraggableLocation;
-      cardId: string;
+      itemId: string;
     }
   | { type: ProjectAction.ADD_CARD; sprintId?: string; listId: string; content: string }
   | {
       type: ProjectAction.UPDATE_CARD;
       sprintId?: string;
       listId: string;
-      cardId: string;
+      itemId: string;
       content: string;
     }
   | { type: ProjectAction.ADD_LIST; sprintId: string; listTitle: string }
-  | { type: ProjectAction.DELETE_CARD; sprintId?: string; listId: string; cardId: string }
+  | { type: ProjectAction.DELETE_CARD; sprintId?: string; listId: string; itemId: string }
   | { type: ProjectAction.DELETE_LIST; sprintId: string; listId: string }
   | { type: ProjectAction.UPDATE_LIST_TITLE; sprintId: string; listId: string; listTitle: string };
 
@@ -52,7 +52,7 @@ export const ProjectProvider: React.FC<Props> = ({ children }) => {
   function reducer(state: BoardData, action: ProjectActionType) {
     switch (action.type) {
       case ProjectAction.REORDER_CARD_POSITION:
-        return reorderCardPosition(state, action.source, action.destination, action.cardId);
+        return reorderCardPosition(state, action.source, action.destination, action.itemId);
       case ProjectAction.ADD_CARD:
         return addCard({
           boardData: state,
@@ -65,7 +65,7 @@ export const ProjectProvider: React.FC<Props> = ({ children }) => {
           boardData: state,
           sprintId: action.sprintId,
           listId: action.listId,
-          cardId: action.cardId,
+          itemId: action.itemId,
           content: action.content,
         });
       case ProjectAction.ADD_LIST:
@@ -77,7 +77,7 @@ export const ProjectProvider: React.FC<Props> = ({ children }) => {
           boardData: state,
           sprintId: action.sprintId,
           listId: action.listId,
-          cardId: action.cardId,
+          itemId: action.itemId,
         });
       case ProjectAction.UPDATE_LIST_TITLE:
         return updateListTitle(state, action.sprintId, action.listId, action.listTitle);

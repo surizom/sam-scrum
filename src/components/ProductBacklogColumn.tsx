@@ -2,8 +2,8 @@
 import React from "react";
 import styled from "styled-components";
 import { Draggable, Droppable } from "react-beautiful-dnd";
-import Card from "./Card";
-import AddCard from "./AddCard";
+import Item from "./Item";
+import AddItem from "./AddItem";
 import { Column, Cards } from "../types/types";
 
 const ListWrapper = styled.div`
@@ -56,13 +56,13 @@ const ProductBackLogColumn = ({ listId, listData }: ProductBackLogColumnProps) =
               {(droppableProvided) => (
                 <ListDroppable ref={droppableProvided.innerRef}>
                   {cardIds.map((id) => (
-                    <Card key={id} cardId={id} listId={listId} cardData={listData.cards[id]} />
+                    <Item key={id} itemId={id} listId={listId} itemData={listData.cards[id]} />
                   ))}
                   {droppableProvided.placeholder}
                 </ListDroppable>
               )}
             </Droppable>
-            <AddCard listId={listId} />
+            <AddItem listId={listId} />
           </ListContent>
         </ListWrapper>
       )}

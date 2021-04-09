@@ -215,21 +215,21 @@ export const updateCard = ({
   boardData,
   sprintId,
   listId,
-  cardId,
+  itemId,
   content,
 }: {
   boardData: BoardData;
   sprintId?: string;
   listId: string;
-  cardId: string;
+  itemId: string;
   content: string;
 }): BoardData => {
   const newBoardData = cloneDeep(boardData);
   if (sprintId === undefined) {
-    newBoardData.backlog[listId].cards[cardId].card_content = content;
+    newBoardData.backlog[listId].cards[itemId].card_content = content;
     return newBoardData;
   }
-  newBoardData.sprints[sprintId].data[listId].cards[cardId].card_content = content;
+  newBoardData.sprints[sprintId].data[listId].cards[itemId].card_content = content;
   return newBoardData;
 };
 
@@ -261,16 +261,16 @@ export const deleteCard = ({
   boardData,
   sprintId,
   listId,
-  cardId,
+  itemId,
 }: {
   boardData: BoardData;
   sprintId?: string;
   listId: string;
-  cardId: string;
+  itemId: string;
 }) => {
   // if product backlog
   if (sprintId === undefined) {
-    return omit(boardData, [`backlog.${listId}.cards.${cardId}`]) as BoardData;
+    return omit(boardData, [`backlog.${listId}.cards.${itemId}`]) as BoardData;
   }
-  return omit(boardData, [`sprints.${sprintId}.data.${listId}.cards.${cardId}`]) as BoardData;
+  return omit(boardData, [`sprints.${sprintId}.data.${listId}.cards.${itemId}`]) as BoardData;
 };

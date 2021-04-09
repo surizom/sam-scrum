@@ -2,8 +2,8 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import { Draggable, Droppable } from "react-beautiful-dnd";
-import Card from "./Card";
-import AddCard from "./AddCard";
+import Item from "./Item";
+import AddItem from "./AddItem";
 import ListTitle from "./ListTitle";
 import { Column, Cards } from "../types/types";
 
@@ -61,19 +61,19 @@ const List = ({ listId, listData, sprintId }: ListProps) => {
               {(droppableProvided) => (
                 <ListDroppable ref={droppableProvided.innerRef}>
                   {cardIds.map((id) => (
-                    <Card
+                    <Item
                       key={id}
                       sprintId={sprintId}
-                      cardId={id}
+                      itemId={id}
                       listId={listId}
-                      cardData={listData.cards[id]}
+                      itemData={listData.cards[id]}
                     />
                   ))}
                   {droppableProvided.placeholder}
                 </ListDroppable>
               )}
             </Droppable>
-            <AddCard sprintId={sprintId} listId={listId} />
+            <AddItem sprintId={sprintId} listId={listId} />
           </ListContent>
         </ListWrapper>
       )}
