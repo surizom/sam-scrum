@@ -1,26 +1,27 @@
 import { ProjectData } from "../types/types";
 
 export const INITIAL_PROJECT_DATA: ProjectData = {
+  project_title: "Main Project",
   sprints: {
     "7cd31ac2-acfc-4912-a6ad-98ecdef9fff5": {
       data: {
         "5cac8c9e-f91b-438a-9e18-00cea4667ee3": {
           position: 0,
-          list_title: "todo",
+          list_title: "Sprint Backlog",
           items: {
             "52f8d85a-0196-46f0-96f3-5878846851dd": {
               position: 0,
               item_content: "todo item 1",
             },
             "271beef3-8082-4ec2-aa9b-955944aea405": {
-              position: 2,
+              position: 1,
               item_content: "second todo item",
             },
           },
         },
         "860c2140-f2cd-4e9a-8b82-179137e19b1e": {
           position: 1,
-          list_title: "done",
+          list_title: "Doing",
           items: {
             "63bdd1d2-aa55-4e69-8f98-b345b5b6bdfd": {
               position: 0,
@@ -36,9 +37,28 @@ export const INITIAL_PROJECT_DATA: ProjectData = {
             },
           },
         },
+        "860c2140-f2cd-4e9a-8b82-179477e19b1e": {
+          position: 2,
+          list_title: "Done",
+          items: {
+            "63bdd1d2-aa55-4e69-0f98-b345b5b6bdfd": {
+              position: 0,
+              item_content: "some data here",
+            },
+            "562b284c-babe-48ce-8e4d-12d3fed2334a": {
+              position: 2,
+              item_content: "here is more text",
+            },
+            "22c54528-b4d5-4142-8069-3f82b91a7a2e": {
+              position: 1,
+              item_content: "Multi-line item example. Multi-line item example. ",
+            },
+          },
+        },
       },
       startDate: new Date(),
       endDate: new Date(),
+      position: 0,
       goal: "My first sprint !",
     },
   },

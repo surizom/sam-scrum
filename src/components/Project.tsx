@@ -4,14 +4,56 @@ import styled from "styled-components";
 import { DragDropContext, Droppable, DropResult } from "react-beautiful-dnd";
 import { ProjectActionType, ProjectContext } from "../state/projectContext";
 import { ProjectAction } from "../state/constants";
-import ProductBackLogColumn from "./ProductBacklogColumn";
+import ProductBackLog from "./ProductBacklog";
 import Sprint from "./Sprint";
+import { Sprints } from "../types/types";
 
 const ProjectContainer = styled.div`
-  white-space: nowrap;
+  flex: 1;
   overflow-x: auto;
-  height: 100%;
+  min-height: 100%;
   display: flex;
+  flex-direction: column;
+`;
+
+const ProjectHeader = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  padding: 8px;
+`;
+
+const ProjectTitle = styled.div`
+  font-weight: 700;
+  font-size: 30px;
+  color: white;
+  margin-right: 16px;
+`;
+
+const ProjectContent = styled.div`
+  flex: 1;
+  overflow-x: auto;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+`;
+
+const AddSprintButton = styled.button`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  cursor: pointer;
+  background-color: #4e97c2;
+  border-radius: 4px;
+  border: none;
+  color: white;
+  outline: 0;
+`;
+
+const AddSprintPlusIcon = styled.div`
+  color: white;
+  font-size: 22px;
+  margin-right: 12px;
 `;
 
 const onDragEnd = (dispatch: Dispatch<ProjectActionType>) => (result: DropResult): void => {
@@ -60,7 +102,9 @@ const Project = () => {
     }
   };
 
-  const sprintIds: string[] = Object.keys(projectData.sprints);
+  const sortFn = (data: Sprints) => (a: string, b: string) => data[a].position - data[b].position;
+
+  const sprintIds: string[] = Object.keys(projectData.sprints).sort(sortFn(projectData.sprints));
   const backlogIds: string[] = Object.keys(projectData.backlog);
 
   return (
@@ -68,18 +112,27 @@ const Project = () => {
       <Droppable droppableId="board" type="COLUMN" direction="horizontal">
         {(provided) => (
           <ProjectContainer ref={provided.innerRef} {...provided.droppableProps}>
-            {backlogIds.map((backlogId) => (
-              <ProductBackLogColumn
-                key={backlogId}
-                listId={backlogId}
-                listData={projectData.backlog[backlogId]}
-              />
-            ))}
+            <ProjectHeader>
+              <ProjectTitle>{projectData.project_title}</ProjectTitle>
+              <AddSprintButton>
+                <AddSprintPlusIcon>+</AddSprintPlusIcon>
+                Add Sprint
+              </AddSprintButton>
+            </ProjectHeader>
+            <ProjectContent>
+              {backlogIds.map((backlogId) => (
+                <ProductBackLog
+                  key={backlogId}
+                  listId={backlogId}
+                  listData={projectData.backlog[backlogId]}
+                />
+              ))}
 
-            {sprintIds.map((sprintId) => (
-              <Sprint sprintId={sprintId} />
-            ))}
-            {provided.placeholder}
+              {sprintIds.map((sprintId) => (
+                <Sprint key={sprintId} sprintId={sprintId} />
+              ))}
+              {provided.placeholder}
+            </ProjectContent>
           </ProjectContainer>
         )}
       </Droppable>

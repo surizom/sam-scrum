@@ -4,8 +4,36 @@ body {
     "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: #0079bf;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
+body,
+html,
+#root {
+  height: 100%;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+@font-face {
+  font-family: trellicons;
+  src: url("https://a.trellocdn.com/prgb/dist/fonts/trellicons.01f4873da4f2b2c57352.eot#iefix")
+      format("embedded-opentype"),
+    url("https://a.trellocdn.com/prgb/dist/fonts/trellicons.f95b53426037fc215170.ttf")
+      format("truetype"),
+    url("https://a.trellocdn.com/prgb/dist/fonts/trellicons.c914986d44ff5c34e6f8.woff")
+      format("woff");
+  font-style: normal;
+  font-weight: 400;
+}
+
+* {
+  font-family: Roboto;
+  font-size: 14px;
+}
+
+.trellicons {
+  font-family: trellicons;
 }

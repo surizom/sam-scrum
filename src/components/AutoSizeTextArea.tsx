@@ -3,23 +3,23 @@ import styled from "styled-components";
 
 interface TextAreaProps {
   readonly editMode: boolean;
+  readonly isTitle: boolean;
 }
 const TextArea = styled.textarea<TextAreaProps>`
   cursor: ${(props) => (props.editMode ? "text" : "pointer")};
   height: auto;
+  width: 100%;
   overflow-y: hidden;
-  margin: -4px 0;
-  padding: 4px 8px;
   border: none;
   resize: none;
-  border-radius: 3px;
+  border-radius: 4px;
   width: 100%;
+  padding: 0;
+  font-weight: ${(props) => (props.isTitle ? "600" : "400")};
+  text-align: ${(props) => (props.isTitle ? "center" : "start")};
+  font-size: ${(props) => (props.isTitle ? "22px" : "unset")};
+  color: ${(props) => (props.isTitle ? "#40506C" : "unset")};
   background: transparent;
-  &:focus {
-    background: white;
-    box-shadow: inset 0 0 0 2px #0079bf;
-    outline: 0;
-  }
 `;
 
 type AutoSizeTextAreaProps = {
@@ -28,6 +28,7 @@ type AutoSizeTextAreaProps = {
   onSave: (value: string) => void;
   updateValue: string;
   onBlur: (text: string) => void;
+  isTitle: boolean;
 };
 const AutoSizeTextArea = ({
   placeholder,
@@ -35,6 +36,7 @@ const AutoSizeTextArea = ({
   onSave,
   updateValue,
   onBlur,
+  isTitle,
 }: AutoSizeTextAreaProps) => {
   const [textAreaValue, setTextAreaValue] = useState("");
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
@@ -72,6 +74,7 @@ const AutoSizeTextArea = ({
   };
   return (
     <TextArea
+      isTitle={isTitle}
       ref={textAreaRef}
       value={textAreaValue}
       onChange={onChange}

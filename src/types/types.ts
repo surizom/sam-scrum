@@ -15,13 +15,16 @@ export type Columns = {
 };
 export type Sprint = {
   data: Columns;
+  position: number;
   goal: string;
   startDate: Date;
   endDate: Date;
 };
+export type Sprints = {
+  [id: string]: Sprint;
+};
 export type ProjectData = {
-  sprints: {
-    [id: string]: Sprint;
-  };
+  project_title: string;
+  sprints: Sprints;
   backlog: Columns;
 };

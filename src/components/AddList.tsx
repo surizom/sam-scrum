@@ -18,13 +18,8 @@ const Wrapper = styled.div<WrapperProps>`
   padding: 8px;
   display: flex;
   flex-direction: column;
-  background-color: ${(props) => (props.compose ? "#ebecf0" : "hsla(0, 0%, 100%, 0.24)")};
+  background: #4e97c2;
   color: #fff;
-  &:hover {
-    /* alternative to ternary */
-    background-color: hsla(0, 0%, 100%, 0.32);
-    ${(props) => props.compose && "background-color: #ebecf0;"}
-  }
 `;
 
 const Button = styled.div`

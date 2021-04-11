@@ -1,33 +1,58 @@
-import "./css/reset.css";
-import "./css/global.css";
 import React from "react";
 import styled from "styled-components";
 import Project from "./components/Project";
-import github from "./img/github.png";
 import { ProjectProvider } from "./state/projectContext";
 
 const Heading = styled.div`
-  font-family: roboto;
-  color: white;
-  margin: 8px;
-  text-align: center;
-  font-weight: 600;
-  font-size: 40px;
+  flex: 0;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  background-color: #026aa7;
+`;
+
+const Title = styled.div`
+  color: #80b4d3;
+  font-size: 38px;
+  font-style: italic;
+  font-weight: 500;
+  margin-left: 8px;
+`;
+
+const LogoSquare = styled.div`
   position: relative;
-  & img {
-    position: absolute;
-    background-color: white;
-    left: 0;
-    top: 0;
-    border-radius: 3px;
-    height: 40px;
-    width: 40px;
-    padding: 3px;
-  }
+  width: 32px;
+  height: 32px;
+
+  background: #80b4d3;
+  border-radius: 5px;
+`;
+
+const LogoRectangle1 = styled.div`
+  position: absolute;
+  width: 22px;
+  height: 8px;
+  left: 5px;
+  top: 11px;
+
+  background: #026aa7;
+  border-radius: 2px;
+`;
+
+const LogoRectangle2 = styled.div`
+  position: absolute;
+  width: 22px;
+  height: 8px;
+  left: 5px;
+  top: 20px;
+
+  background: #026aa7;
+  border-radius: 2px;
 `;
 
 const Container = styled.div`
-  height: 100%;
+  min-height: 100%;
   display: flex;
   flex-direction: column;
 `;
@@ -36,14 +61,11 @@ const App = () => (
   <Container>
     <ProjectProvider>
       <Heading>
-        <a
-          target="_blank"
-          rel="noopener noreferrer"
-          href="https://github.com/tberghuis/trello-board-clone"
-        >
-          <img src={github} alt="Github" />
-        </a>
-        <span>Trello Board Clone</span>
+        <LogoSquare>
+          <LogoRectangle1 />
+          <LogoRectangle2 />
+        </LogoSquare>
+        <Title>Sam</Title>
       </Heading>
       <Project />
     </ProjectProvider>

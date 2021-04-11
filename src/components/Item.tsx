@@ -11,11 +11,12 @@ const Delete = styled.div`
   position: absolute;
   top: 4px;
   right: 4px;
+  font-size: 16px;
+  line-height: 23px;
   font-family: trellicons;
   border-radius: 3px;
   height: 23px;
   width: 23px;
-  line-height: 23px;
   text-align: center;
   &:hover {
     background-color: rgba(9, 30, 66, 0.08);
@@ -25,9 +26,7 @@ const Delete = styled.div`
 `;
 
 const TextAreaWrapper = styled.div`
-  padding-top: 6px;
-  padding-bottom: 2px;
-  /* padding-right: 36px; */
+  width: 100%;
 `;
 
 interface ItemDraggableProps {
@@ -35,11 +34,18 @@ interface ItemDraggableProps {
 }
 
 const ItemDraggable = styled.div<ItemDraggableProps>`
-  background-color: #fff;
-  border-radius: 3px;
-  box-shadow: ${(props) => (props.editMode ? "none" : "0 2px 4px rgba(2, 2, 2, 0.6)")};
-  margin-bottom: 8px;
   position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding-top: 12px;
+  padding-bottom: 8px;
+  padding-left: 14px;
+  padding-right: 14px;
+  background-color: #fff;
+  border-radius: 4px;
+  box-shadow: ${(props) => (props.editMode ? "none" : "0px 2px 0px rgba(0, 0, 0, 0.2)")};
+  margin-bottom: 8px;
   &:hover ${Delete} {
     visibility: visible;
   }
@@ -84,6 +90,7 @@ const Item = ({ listId, itemId, itemData, sprintId }: ItemProps) => {
         >
           <TextAreaWrapper onClick={contentClick}>
             <AutoSizeTextArea
+              isTitle={false}
               placeholder=""
               onSave={onSave}
               updateValue={itemData.item_content}

@@ -8,23 +8,23 @@ import ListTitle from "./ListTitle";
 import { Column, Items } from "../types/types";
 
 const ListWrapper = styled.div`
-  &:first-child {
-    margin-left: 8px;
-  }
-  width: 272px;
-  display: inline-block;
-  flex: 0 0 272px;
-  margin: 0 4px;
-`;
-const ListContent = styled.div`
-  background-color: #ebecf0;
-  border-radius: 3px;
+  position: relative;
+  width: 270px;
+  margin: 0 8px;
+  background-color: #e3e4e6;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding-top: 8px;
+  padding-left: 8px;
+  padding-right: 8px;
+  padding-bottom: 2px;
 `;
 
 const ListDroppable = styled.div`
   min-height: 50px;
-  margin: 0 4px;
-  padding: 0 4px;
 `;
 
 const sortFn = (data: Items) => (a: string, b: string) => data[a].position - data[b].position;
@@ -32,7 +32,7 @@ const sortFn = (data: Items) => (a: string, b: string) => data[a].position - dat
 type ListProps = {
   listId: string;
   listData: Column;
-  sprintId: string;
+  sprintId?: string;
 };
 
 const List = ({ listId, listData, sprintId }: ListProps) => {
@@ -48,33 +48,31 @@ const List = ({ listId, listData, sprintId }: ListProps) => {
     >
       {(provided) => (
         <ListWrapper ref={provided.innerRef} {...provided.draggableProps}>
-          <ListContent>
-            <ListTitle
-              sprintId={sprintId}
-              dragHandleProps={provided.dragHandleProps}
-              listId={listId}
-              title={listData.list_title}
-              setDragBlocking={setDragBlocking}
-            />
+          <ListTitle
+            sprintId={sprintId}
+            dragHandleProps={provided.dragHandleProps}
+            listId={listId}
+            title={listData.list_title}
+            setDragBlocking={setDragBlocking}
+          />
 
-            <Droppable droppableId={listId}>
-              {(droppableProvided) => (
-                <ListDroppable ref={droppableProvided.innerRef}>
-                  {itemIds.map((id) => (
-                    <Item
-                      key={id}
-                      sprintId={sprintId}
-                      itemId={id}
-                      listId={listId}
-                      itemData={listData.items[id]}
-                    />
-                  ))}
-                  {droppableProvided.placeholder}
-                </ListDroppable>
-              )}
-            </Droppable>
-            <AddItem sprintId={sprintId} listId={listId} />
-          </ListContent>
+          <Droppable droppableId={listId}>
+            {(droppableProvided) => (
+              <ListDroppable ref={droppableProvided.innerRef}>
+                {itemIds.map((id) => (
+                  <Item
+                    key={id}
+                    sprintId={sprintId}
+                    itemId={id}
+                    listId={listId}
+                    itemData={listData.items[id]}
+                  />
+                ))}
+                {droppableProvided.placeholder}
+              </ListDroppable>
+            )}
+          </Droppable>
+          {!sprintId ? <AddItem sprintId={sprintId} listId={listId} /> : null}
         </ListWrapper>
       )}
     </Draggable>

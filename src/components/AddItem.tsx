@@ -49,6 +49,7 @@ const AddItem = ({ listId, sprintId }: AddItemProps) => {
   return (
     <Wrapper>
       <AutoSizeTextArea
+        isTitle={false}
         onSave={onSave}
         updateValue=""
         onBlur={cancel}

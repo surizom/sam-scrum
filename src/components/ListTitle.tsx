@@ -10,10 +10,11 @@ const Delete = styled.div`
   top: 4px;
   right: 4px;
   font-family: trellicons;
+  font-size: 16px;
+  line-height: 32px;
   border-radius: 3px;
   height: 32px;
   width: 32px;
-  line-height: 32px;
   text-align: center;
   &:hover {
     background-color: rgba(9, 30, 66, 0.08);
@@ -22,7 +23,6 @@ const Delete = styled.div`
 `;
 
 const Container = styled.div`
-  position: relative;
   && {
     cursor: pointer;
   }
@@ -32,18 +32,13 @@ const Container = styled.div`
 `;
 
 const TextAreaWrapper = styled.div`
-  padding: 10px 8px;
-  padding-right: 36px;
-
-  & textarea {
-    font-weight: 600;
-  }
+  padding: 4px 8px;
 `;
 
 type ListTileProps = {
   setDragBlocking: (dragBlocking: boolean) => void;
   dragHandleProps: HTMLAttributes<HTMLDivElement> | undefined;
-  sprintId: string;
+  sprintId?: string;
   listId: string;
   title: string;
 };
@@ -60,40 +55,51 @@ const ListTitle = ({
 
   const { dispatch } = useContext(ProjectContext);
 
-  const onSave = (_title: string) => {
-    if (_title.trim() === "") {
-      // this is hack, prevent user accidently deleting title
-      setUpdateValue("");
-      setTimeout(() => setUpdateValue(title), 0);
-    } else {
-      dispatch({ type: ProjectAction.UPDATE_LIST_TITLE, sprintId, listId, listTitle: _title });
-    }
+  const onSave =
+    sprintId === undefined
+      ? () => {}
+      : (_title: string) => {
+          if (_title.trim() === "") {
+            // this is hack, prevent user accidently deleting title
+            setUpdateValue("");
+            setTimeout(() => setUpdateValue(title), 0);
+          } else {
+            dispatch({
+              type: ProjectAction.UPDATE_LIST_TITLE,
+              sprintId,
+              listId,
+              listTitle: _title,
+            });
+          }
 
-    setDragBlocking(false);
-    setEditMode(false);
-  };
+          setDragBlocking(false);
+          setEditMode(false);
+        };
 
   const titleClick = () => {
     setDragBlocking(true);
     setEditMode(true);
   };
 
-  const deleteClick = () => {
-    dispatch({ type: ProjectAction.DELETE_LIST, sprintId, listId });
-  };
+  const deleteClick =
+    sprintId === undefined
+      ? () => {}
+      : () => {
+          dispatch({ type: ProjectAction.DELETE_LIST, sprintId, listId });
+        };
 
   return (
     <Container {...dragHandleProps}>
       <TextAreaWrapper onClick={titleClick}>
         <AutoSizeTextArea
+          isTitle
           placeholder=""
           onSave={onSave}
           updateValue={updateValue}
           onBlur={onSave}
-          editMode={editMode}
+          editMode={!!sprintId && editMode}
         />
       </TextAreaWrapper>
-
       <Delete onClick={deleteClick}>&#xE918;</Delete>
     </Container>
   );
