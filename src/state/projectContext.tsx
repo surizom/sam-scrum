@@ -4,12 +4,13 @@ import { ProjectData } from "../types/types";
 import {
   addItem,
   addList,
+  createSprint,
   deleteItem,
   deleteList,
   reorderItemPosition,
   updateItem,
   updateListTitle,
-} from "./boardDataReducers";
+} from "./reducers/boardDataReducers";
 import { INITIAL_PROJECT_DATA, ProjectAction } from "./constants";
 
 interface Props {
@@ -46,7 +47,14 @@ export type ProjectActionType =
   | { type: ProjectAction.ADD_LIST; sprintId: string; listTitle: string }
   | { type: ProjectAction.DELETE_ITEM; sprintId?: string; listId: string; itemId: string }
   | { type: ProjectAction.DELETE_LIST; sprintId: string; listId: string }
-  | { type: ProjectAction.UPDATE_LIST_TITLE; sprintId: string; listId: string; listTitle: string };
+  | { type: ProjectAction.UPDATE_LIST_TITLE; sprintId: string; listId: string; listTitle: string }
+  | {
+      type: ProjectAction.CREATE_SPRINT;
+      sprintId: string;
+      goal: string;
+      startDate: Date;
+      endDate: Date;
+    };
 
 export const ProjectProvider: React.FC<Props> = ({ children }) => {
   function reducer(state: ProjectData, action: ProjectActionType) {
@@ -81,6 +89,14 @@ export const ProjectProvider: React.FC<Props> = ({ children }) => {
         });
       case ProjectAction.UPDATE_LIST_TITLE:
         return updateListTitle(state, action.sprintId, action.listId, action.listTitle);
+      case ProjectAction.CREATE_SPRINT:
+        return createSprint({
+          projectData: state,
+          id: action.sprintId,
+          goal: action.goal,
+          startDate: action.startDate,
+          endDate: action.endDate,
+        });
       default:
         return state;
     }

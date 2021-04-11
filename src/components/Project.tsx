@@ -2,6 +2,8 @@
 import React, { Dispatch, useContext } from "react";
 import styled from "styled-components";
 import { DragDropContext, Droppable, DropResult } from "react-beautiful-dnd";
+import { v4 as uuidv4 } from "uuid";
+
 import { ProjectActionType, ProjectContext } from "../state/projectContext";
 import { ProjectAction } from "../state/constants";
 import ProductBackLog from "./ProductBacklog";
@@ -102,6 +104,20 @@ const Project = () => {
     }
   };
 
+  const addSprint = () => {
+    const id = uuidv4();
+    const goal = "my goal";
+    const startDate = new Date();
+    const endDate = new Date();
+    dispatch({
+      type: ProjectAction.CREATE_SPRINT,
+      sprintId: id,
+      goal,
+      startDate,
+      endDate,
+    });
+  };
+
   const sortFn = (data: Sprints) => (a: string, b: string) => data[a].position - data[b].position;
 
   const sprintIds: string[] = Object.keys(projectData.sprints).sort(sortFn(projectData.sprints));
@@ -114,7 +130,7 @@ const Project = () => {
           <ProjectContainer ref={provided.innerRef} {...provided.droppableProps}>
             <ProjectHeader>
               <ProjectTitle>{projectData.project_title}</ProjectTitle>
-              <AddSprintButton>
+              <AddSprintButton type="button" onClick={() => addSprint()}>
                 <AddSprintPlusIcon>+</AddSprintPlusIcon>
                 Add Sprint
               </AddSprintButton>

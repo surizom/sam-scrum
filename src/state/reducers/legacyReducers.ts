@@ -1,9 +1,9 @@
 /* eslint-disable no-restricted-syntax */
 import { DraggableLocation } from "react-beautiful-dnd";
-import uuid from "uuidv4";
+import { v4 as uuidv4 } from "uuid";
 import { omit, cloneDeep } from "lodash";
 
-import { ProjectData, Item, Items, Column } from "../types/types";
+import { ProjectData, Item, Items, Column } from "../../types/types";
 
 const moveItemWithinSameList = ({
   sourceIndex,
@@ -203,7 +203,7 @@ export const addItem = ({
       : projectData.sprints[sprintId].data[listId].items;
   const position: number = Object.keys(listItems).length;
   const item: Item = { position, item_content: content };
-  const newId = uuid();
+  const newId = uuidv4();
 
   const newProjectData = cloneDeep(projectData);
   if (sprintId === undefined) {
@@ -243,7 +243,7 @@ export const addList = (
 ): ProjectData => {
   const position: number = Object.keys(projectData.sprints[sprintId].data).length;
   const list: Column = { position, list_title: listTitle, items: {} };
-  const newId = uuid();
+  const newId = uuidv4();
 
   const newBoardData = cloneDeep(projectData);
   newBoardData.sprints[sprintId].data[newId] = list;

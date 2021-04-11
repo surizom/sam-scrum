@@ -88,4 +88,5 @@ export enum ProjectAction {
   ADD_LIST = "addList",
   DELETE_LIST = "deleteList",
   UPDATE_LIST_TITLE = "updateListTitle",
+  CREATE_SPRINT = "createSprint",
 }
