@@ -19,6 +19,7 @@ export type Sprint = {
   goal: string;
   startDate: Date;
   endDate: Date;
+  isOpen: boolean;
 };
 export type Sprints = {
   [id: string]: Sprint;

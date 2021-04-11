@@ -60,6 +60,7 @@ export const INITIAL_PROJECT_DATA: ProjectData = {
       endDate: new Date(),
       position: 0,
       goal: "My first sprint !",
+      isOpen: true,
     },
   },
   backlog: {

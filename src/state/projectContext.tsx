@@ -96,6 +96,7 @@ export const ProjectProvider: React.FC<Props> = ({ children }) => {
           goal: action.goal,
           startDate: action.startDate,
           endDate: action.endDate,
+          isOpen: true,
         });
       default:
         return state;
