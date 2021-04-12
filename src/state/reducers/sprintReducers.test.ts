@@ -2,6 +2,7 @@ import { v4 as uuidv4 } from "uuid";
 import { ProductData } from "../../types/types";
 import { INITIAL_PRODUCT_DATA } from "../constants";
 import { closeSprint, createSprint, deleteSprint } from "./sprintReducers";
+import { isSameSprintAndDefaultColumns } from "./sprintUtils";
 
 describe("createSprint", () => {
   test("it should create a sprint if the product is empty", () => {
@@ -18,7 +19,7 @@ describe("createSprint", () => {
 
     const actualResult = createSprint({ productData, id, goal, startDate, endDate, isOpen: true });
 
-    const expectedResult: ProductData = {
+    const expectedResultWithoutColumns: ProductData = {
       ...productData,
       sprints: {
         ...productData.sprints,
@@ -33,7 +34,13 @@ describe("createSprint", () => {
       },
     };
 
-    expect(actualResult).toStrictEqual(expectedResult);
+    expect(
+      isSameSprintAndDefaultColumns({
+        actual: actualResult,
+        expected: expectedResultWithoutColumns,
+        sprintId: id,
+      })
+    ).toBe(true);
   });
   test("it should create a sprint without altering the other objects", () => {
     const productData = INITIAL_PRODUCT_DATA;
@@ -46,7 +53,7 @@ describe("createSprint", () => {
 
     const actualResult = createSprint({ productData, id, goal, startDate, endDate, isOpen });
 
-    const expectedResult: ProductData = {
+    const expectedResultWithoutColumns: ProductData = {
       ...productData,
       sprints: {
         ...productData.sprints,
@@ -61,7 +68,13 @@ describe("createSprint", () => {
       },
     };
 
-    expect(actualResult).toStrictEqual(expectedResult);
+    expect(
+      isSameSprintAndDefaultColumns({
+        actual: actualResult,
+        expected: expectedResultWithoutColumns,
+        sprintId: id,
+      })
+    ).toBe(true);
   });
 
   test("it should throw an error if startDate > endDate", () => {
