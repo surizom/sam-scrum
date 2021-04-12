@@ -239,14 +239,14 @@ export const updateItem = ({
 export const addList = (
   productData: ProductData,
   sprintId: string,
+  listId: string,
   listTitle: string
 ): ProductData => {
   const position: number = Object.keys(productData.sprints[sprintId].data).length;
   const list: Column = { position, list_title: listTitle, items: {} };
-  const newId = uuidv4();
 
   const newBoardData = cloneDeep(productData);
-  newBoardData.sprints[sprintId].data[newId] = list;
+  newBoardData.sprints[sprintId].data[listId] = list;
   return newBoardData;
 };
 

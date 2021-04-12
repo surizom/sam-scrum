@@ -1,5 +1,7 @@
 import React, { useState, useRef, useEffect, ChangeEvent, KeyboardEvent, useContext } from "react";
 import styled from "styled-components";
+import { v4 as uuidv4 } from "uuid";
+
 import { ProductAction } from "../state/constants";
 import { ProductContext } from "../state/productContext";
 
@@ -60,7 +62,7 @@ const AddList = ({ sprintId }: AddListProps) => {
   const onKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.keyCode === 13) {
       // e.preventDefault();
-      dispatch({ type: ProductAction.ADD_LIST, sprintId, listTitle });
+      dispatch({ type: ProductAction.ADD_LIST, sprintId, listId: uuidv4(), listTitle });
       setListTitle("");
       setCompose(false);
     }
@@ -68,7 +70,7 @@ const AddList = ({ sprintId }: AddListProps) => {
 
   const onBlur = () => {
     if (listTitle.length > 0) {
-      dispatch({ type: ProductAction.ADD_LIST, sprintId, listTitle });
+      dispatch({ type: ProductAction.ADD_LIST, sprintId, listId: uuidv4(), listTitle });
       setListTitle("");
     }
     setCompose(false);

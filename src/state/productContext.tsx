@@ -47,7 +47,7 @@ export type ProductActionType =
       itemId: string;
       content: string;
     }
-  | { type: ProductAction.ADD_LIST; sprintId: string; listTitle: string }
+  | { type: ProductAction.ADD_LIST; sprintId: string; listId: string; listTitle: string }
   | { type: ProductAction.DELETE_ITEM; sprintId?: string; listId: string; itemId: string }
   | { type: ProductAction.DELETE_LIST; sprintId: string; listId: string }
   | { type: ProductAction.UPDATE_LIST_TITLE; sprintId: string; listId: string; listTitle: string }
@@ -82,7 +82,7 @@ export const ProductProvider: React.FC<Props> = ({ children }) => {
           content: action.content,
         });
       case ProductAction.ADD_LIST:
-        return addList(state, action.sprintId, action.listTitle);
+        return addList(state, action.sprintId, action.listId, action.listTitle);
       case ProductAction.DELETE_LIST:
         return deleteList(state, action.sprintId, action.listId);
       case ProductAction.DELETE_ITEM:
