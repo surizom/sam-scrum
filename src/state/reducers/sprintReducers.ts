@@ -1,6 +1,5 @@
 import { omit } from "lodash";
 import { v4 as uuidv4 } from "uuid";
-
 import { ProductData } from "../../types/types";
 import { someItemsNotDone } from "./sprintUtils";
 
@@ -65,12 +64,24 @@ export const closeSprint = ({ productData, id }: { productData: ProductData; id:
   if (someItemsNotDone(productData.sprints[id])) {
     throw new Error("All items must be in done state in order to close sprint");
   }
+
+  const doneColumnEntry = Object.entries(productData.sprints[id].data).find(
+    (entry) => entry[1].list_title === "Done"
+  );
+
+  if (!doneColumnEntry) {
+    throw new Error("No done column in this sprint");
+  }
+
   const newProductData: ProductData = {
     ...productData,
     sprints: {
       ...productData.sprints,
       [id]: {
         ...productData.sprints[id],
+        data: {
+          [doneColumnEntry[0]]: doneColumnEntry[1],
+        },
         isOpen: false,
       },
     },

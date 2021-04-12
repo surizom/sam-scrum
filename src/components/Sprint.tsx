@@ -6,8 +6,9 @@ import { ProductAction } from "../state/constants";
 import { Columns } from "../types/types";
 import List from "./List";
 
-const SprintWrapper = styled.div`
-  background-color: rgba(255, 255, 255, 0.87);
+const SprintWrapper = styled.div<{ isOpen: boolean }>`
+  background-color: ${(props) =>
+    props.isOpen ? "rgba(255, 255, 255, 0.87)" : "rgba(255, 255, 255, 0.4)"};
   border-radius: 15px;
   display: flex;
   flex-direction: column;
@@ -85,11 +86,17 @@ const Sprint = ({ sprintId }: SprintProps) => {
     sortFn(productData.sprints[sprintId].data)
   );
 
+  const { isOpen } = sprint;
+
+  const prefix = isOpen ? "" : "[CLOSED] ";
+
   return (
-    <SprintWrapper>
+    <SprintWrapper isOpen={isOpen}>
       <SprintHeader>
         <SprintHeaderSide>
-          <SprintTitle>Sprint {sprint.position + 1}</SprintTitle>
+          <SprintTitle>
+            {prefix} Sprint {sprint.position + 1}
+          </SprintTitle>
           <span>durée - date-debut - date fin</span>
         </SprintHeaderSide>
         <SprintHeaderSide>
