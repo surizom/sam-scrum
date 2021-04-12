@@ -57,7 +57,7 @@ export const INITIAL_PRODUCT_DATA: ProductData = {
         },
       },
       startDate: new Date("2021-04-12T10:00:00Z"),
-      endDate: new Date("2021-04-12T11:00:00Z"),
+      endDate: new Date("2021-05-10T11:00:00Z"),
       position: 0,
       goal: "My first sprint !",
       isOpen: true,

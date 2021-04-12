@@ -1,6 +1,8 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useContext } from "react";
 import styled from "styled-components";
+import dayjs from "dayjs";
+
 import { ProductContext } from "../state/productContext";
 import { ProductAction } from "../state/constants";
 import { Columns } from "../types/types";
@@ -86,6 +88,13 @@ const Sprint = ({ sprintId }: SprintProps) => {
     sortFn(productData.sprints[sprintId].data)
   );
 
+  const getDiffDays = (): number => {
+    const endDate = dayjs(sprint.endDate);
+    const startDate = dayjs(sprint.startDate);
+
+    return endDate.diff(startDate, "day");
+  };
+
   const { isOpen } = sprint;
 
   const prefix = isOpen ? "" : "[CLOSED] ";
@@ -97,7 +106,12 @@ const Sprint = ({ sprintId }: SprintProps) => {
           <SprintTitle>
             {prefix} Sprint {sprint.position + 1}
           </SprintTitle>
-          <span>durée - date-debut - date fin</span>
+          {sprint.isOpen && (
+            <span>
+              {getDiffDays()} days - {sprint.startDate.toDateString()} -{" "}
+              {sprint.endDate.toDateString()}
+            </span>
+          )}
         </SprintHeaderSide>
         <SprintHeaderSide>
           <DeleteSprintButton
@@ -105,11 +119,13 @@ const Sprint = ({ sprintId }: SprintProps) => {
           >
             Delete Sprint
           </DeleteSprintButton>
-          <CloseSprintButton
-            onClick={() => dispatch({ type: ProductAction.CLOSE_SPRINT, sprintId })}
-          >
-            Close Sprint
-          </CloseSprintButton>
+          {sprint.isOpen && (
+            <CloseSprintButton
+              onClick={() => dispatch({ type: ProductAction.CLOSE_SPRINT, sprintId })}
+            >
+              Close Sprint
+            </CloseSprintButton>
+          )}
         </SprintHeaderSide>
       </SprintHeader>
       <SprintSubtitle>{sprint.goal}</SprintSubtitle>
