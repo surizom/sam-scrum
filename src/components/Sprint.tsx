@@ -122,7 +122,7 @@ const Sprint = ({ sprintId }: SprintProps) => {
 
           {sprint.isOpen && (
             <EndSprintButton onClick={() => dispatch({ type: ProductAction.END_SPRINT, sprintId })}>
-              Close Sprint
+              End Sprint
             </EndSprintButton>
           )}
         </SprintHeaderSide>
