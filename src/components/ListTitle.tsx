@@ -1,7 +1,6 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import React, { HTMLAttributes, useContext, useState } from "react";
+import React, { useContext } from "react";
 import styled from "styled-components";
-import AutoSizeTextArea from "./AutoSizeTextArea";
 import { ProductAction } from "../state/constants";
 import { ProductContext } from "../state/productContext";
 
@@ -32,54 +31,29 @@ const Container = styled.div`
 `;
 
 const TextAreaWrapper = styled.div`
-  padding: 4px 8px;
+  margin: 4px 0;
+  width: 100%;
+  overflow-y: hidden;
+  border: none;
+  resize: none;
+  border-radius: 4px;
+  width: 100%;
+  padding: 0;
+  font-weight: 600;
+  text-align: center;
+  font-size: 22px;
+  color: #40506c;
+  background: transparent;
 `;
 
 type ListTileProps = {
-  setDragBlocking: (dragBlocking: boolean) => void;
-  dragHandleProps: HTMLAttributes<HTMLDivElement> | undefined;
   sprintId?: string;
   listId: string;
   title: string;
 };
 
-const ListTitle = ({
-  setDragBlocking,
-  dragHandleProps,
-  sprintId,
-  listId,
-  title,
-}: ListTileProps) => {
-  const [editMode, setEditMode] = useState<boolean>(false);
-  const [updateValue, setUpdateValue] = useState<string>(title);
-
+const ListTitle = ({ sprintId, listId, title }: ListTileProps) => {
   const { dispatch } = useContext(ProductContext);
-
-  const onSave =
-    sprintId === undefined
-      ? () => {}
-      : (_title: string) => {
-          if (_title.trim() === "") {
-            // this is hack, prevent user accidently deleting title
-            setUpdateValue("");
-            setTimeout(() => setUpdateValue(title), 0);
-          } else {
-            dispatch({
-              type: ProductAction.UPDATE_LIST_TITLE,
-              sprintId,
-              listId,
-              listTitle: _title,
-            });
-          }
-
-          setDragBlocking(false);
-          setEditMode(false);
-        };
-
-  const titleClick = () => {
-    setDragBlocking(true);
-    setEditMode(true);
-  };
 
   const deleteClick =
     sprintId === undefined
@@ -89,17 +63,8 @@ const ListTitle = ({
         };
 
   return (
-    <Container {...dragHandleProps}>
-      <TextAreaWrapper onClick={titleClick}>
-        <AutoSizeTextArea
-          isTitle
-          placeholder=""
-          onSave={onSave}
-          updateValue={updateValue}
-          onBlur={onSave}
-          editMode={!!sprintId && editMode}
-        />
-      </TextAreaWrapper>
+    <Container>
+      <TextAreaWrapper>{title}</TextAreaWrapper>
       <Delete onClick={deleteClick}>&#xE918;</Delete>
     </Container>
   );

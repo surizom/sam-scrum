@@ -1,9 +1,8 @@
 /* eslint-disable no-restricted-syntax */
+import { cloneDeep, omit } from "lodash";
 import { DraggableLocation } from "react-beautiful-dnd";
 import { v4 as uuidv4 } from "uuid";
-import { omit, cloneDeep } from "lodash";
-
-import { ProductData, Item, Items, Column } from "../../types/types";
+import { Item, Items, ProductData } from "../../types/types";
 
 const moveItemWithinSameList = ({
   sourceIndex,
@@ -234,20 +233,6 @@ export const updateItem = ({
   }
   newItemData.sprints[sprintId].data[listId].items[itemId].item_content = content;
   return newItemData;
-};
-
-export const addList = (
-  productData: ProductData,
-  sprintId: string,
-  listId: string,
-  listTitle: string
-): ProductData => {
-  const position: number = Object.keys(productData.sprints[sprintId].data).length;
-  const list: Column = { position, list_title: listTitle, items: {} };
-
-  const newBoardData = cloneDeep(productData);
-  newBoardData.sprints[sprintId].data[listId] = list;
-  return newBoardData;
 };
 
 export const updateListTitle = (

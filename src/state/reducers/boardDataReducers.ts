@@ -1,6 +1,5 @@
 import {
   addItem,
-  addList,
   deleteItem,
   deleteList,
   reorderItemPosition,
@@ -12,7 +11,6 @@ import { createSprint } from "./sprintReducers";
 
 export {
   addItem,
-  addList,
   deleteItem,
   deleteList,
   reorderItemPosition,

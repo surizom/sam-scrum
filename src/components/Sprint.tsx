@@ -4,7 +4,6 @@ import styled from "styled-components";
 import { ProductContext } from "../state/productContext";
 import { ProductAction } from "../state/constants";
 import { Columns } from "../types/types";
-import AddList from "./AddList";
 import List from "./List";
 
 const SprintWrapper = styled.div`
@@ -116,7 +115,6 @@ const Sprint = ({ sprintId }: SprintProps) => {
             listData={productData.sprints[sprintId].data[listId]}
           />
         ))}
-        <AddList sprintId={sprintId} />
       </ListsWrapper>
     </SprintWrapper>
   );

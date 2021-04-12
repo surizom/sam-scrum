@@ -86,7 +86,6 @@ export enum ProductAction {
   ADD_ITEM = "addItem",
   UPDATE_ITEM = "updateItem",
   DELETE_ITEM = "deleteItem",
-  ADD_LIST = "addList",
   DELETE_LIST = "deleteList",
   UPDATE_LIST_TITLE = "updateListTitle",
   CREATE_SPRINT = "createSprint",
