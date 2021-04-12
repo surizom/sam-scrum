@@ -1,4 +1,5 @@
 /* eslint-disable import/prefer-default-export */
+import { omit } from "lodash";
 import { ProjectData } from "../../types/types";
 import { someItemsNotDone } from "./closeSprintUtils";
 
@@ -51,6 +52,14 @@ export const closeSprint = ({ projectData, id }: { projectData: ProjectData; id:
         isOpen: false,
       },
     },
+  };
+  return newProjectData;
+};
+
+export const deleteSprint = ({ projectData, id }: { projectData: ProjectData; id: string }) => {
+  const newProjectData: ProjectData = {
+    ...projectData,
+    sprints: omit(projectData.sprints, [id]),
   };
   return newProjectData;
 };
