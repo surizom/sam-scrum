@@ -1,6 +1,6 @@
 import React, { createContext, ReactNode, useReducer } from "react";
 import { DraggableLocation } from "react-beautiful-dnd";
-import { ProjectData } from "../types/types";
+import { ProductData } from "../types/types";
 import {
   addItem,
   addList,
@@ -11,87 +11,87 @@ import {
   updateItem,
   updateListTitle,
 } from "./reducers/boardDataReducers";
-import { INITIAL_PROJECT_DATA, ProjectAction } from "./constants";
+import { INITIAL_PRODUCT_DATA, ProductAction } from "./constants";
 
 interface Props {
   children?: ReactNode;
 }
 
-interface ProjectContextProps {
-  projectData: ProjectData;
-  dispatch: React.Dispatch<ProjectActionType>;
+interface ProductContextProps {
+  productData: ProductData;
+  dispatch: React.Dispatch<ProductActionType>;
 }
 
-export const INITIAL_CONTEXT_VALUE: ProjectContextProps = {
-  projectData: INITIAL_PROJECT_DATA,
+export const INITIAL_CONTEXT_VALUE: ProductContextProps = {
+  productData: INITIAL_PRODUCT_DATA,
   dispatch: () => null,
 };
 
-export const ProjectContext = createContext<ProjectContextProps>(INITIAL_CONTEXT_VALUE);
+export const ProductContext = createContext<ProductContextProps>(INITIAL_CONTEXT_VALUE);
 
-export type ProjectActionType =
+export type ProductActionType =
   | {
-      type: ProjectAction.REORDER_ITEM_POSITION;
+      type: ProductAction.REORDER_ITEM_POSITION;
       source: DraggableLocation;
       destination: DraggableLocation;
       itemId: string;
     }
-  | { type: ProjectAction.ADD_ITEM; sprintId?: string; listId: string; content: string }
+  | { type: ProductAction.ADD_ITEM; sprintId?: string; listId: string; content: string }
   | {
-      type: ProjectAction.UPDATE_ITEM;
+      type: ProductAction.UPDATE_ITEM;
       sprintId?: string;
       listId: string;
       itemId: string;
       content: string;
     }
-  | { type: ProjectAction.ADD_LIST; sprintId: string; listTitle: string }
-  | { type: ProjectAction.DELETE_ITEM; sprintId?: string; listId: string; itemId: string }
-  | { type: ProjectAction.DELETE_LIST; sprintId: string; listId: string }
-  | { type: ProjectAction.UPDATE_LIST_TITLE; sprintId: string; listId: string; listTitle: string }
+  | { type: ProductAction.ADD_LIST; sprintId: string; listTitle: string }
+  | { type: ProductAction.DELETE_ITEM; sprintId?: string; listId: string; itemId: string }
+  | { type: ProductAction.DELETE_LIST; sprintId: string; listId: string }
+  | { type: ProductAction.UPDATE_LIST_TITLE; sprintId: string; listId: string; listTitle: string }
   | {
-      type: ProjectAction.CREATE_SPRINT;
+      type: ProductAction.CREATE_SPRINT;
       sprintId: string;
       goal: string;
       startDate: Date;
       endDate: Date;
     };
 
-export const ProjectProvider: React.FC<Props> = ({ children }) => {
-  function reducer(state: ProjectData, action: ProjectActionType) {
+export const ProductProvider: React.FC<Props> = ({ children }) => {
+  function reducer(state: ProductData, action: ProductActionType) {
     switch (action.type) {
-      case ProjectAction.REORDER_ITEM_POSITION:
+      case ProductAction.REORDER_ITEM_POSITION:
         return reorderItemPosition(state, action.source, action.destination, action.itemId);
-      case ProjectAction.ADD_ITEM:
+      case ProductAction.ADD_ITEM:
         return addItem({
-          projectData: state,
+          productData: state,
           sprintId: action.sprintId,
           listId: action.listId,
           content: action.content,
         });
-      case ProjectAction.UPDATE_ITEM:
+      case ProductAction.UPDATE_ITEM:
         return updateItem({
-          projectData: state,
+          productData: state,
           sprintId: action.sprintId,
           listId: action.listId,
           itemId: action.itemId,
           content: action.content,
         });
-      case ProjectAction.ADD_LIST:
+      case ProductAction.ADD_LIST:
         return addList(state, action.sprintId, action.listTitle);
-      case ProjectAction.DELETE_LIST:
+      case ProductAction.DELETE_LIST:
         return deleteList(state, action.sprintId, action.listId);
-      case ProjectAction.DELETE_ITEM:
+      case ProductAction.DELETE_ITEM:
         return deleteItem({
-          projectData: state,
+          productData: state,
           sprintId: action.sprintId,
           listId: action.listId,
           itemId: action.itemId,
         });
-      case ProjectAction.UPDATE_LIST_TITLE:
+      case ProductAction.UPDATE_LIST_TITLE:
         return updateListTitle(state, action.sprintId, action.listId, action.listTitle);
-      case ProjectAction.CREATE_SPRINT:
+      case ProductAction.CREATE_SPRINT:
         return createSprint({
-          projectData: state,
+          productData: state,
           id: action.sprintId,
           goal: action.goal,
           startDate: action.startDate,
@@ -103,9 +103,9 @@ export const ProjectProvider: React.FC<Props> = ({ children }) => {
     }
   }
 
-  const [projectData, dispatch] = useReducer(reducer, INITIAL_CONTEXT_VALUE.projectData);
+  const [productData, dispatch] = useReducer(reducer, INITIAL_CONTEXT_VALUE.productData);
 
   return (
-    <ProjectContext.Provider value={{ projectData, dispatch }}>{children}</ProjectContext.Provider>
+    <ProductContext.Provider value={{ productData, dispatch }}>{children}</ProductContext.Provider>
   );
 };

@@ -4,13 +4,13 @@ import styled from "styled-components";
 import { DragDropContext, Droppable, DropResult } from "react-beautiful-dnd";
 import { v4 as uuidv4 } from "uuid";
 
-import { ProjectActionType, ProjectContext } from "../state/projectContext";
-import { ProjectAction } from "../state/constants";
+import { ProductActionType, ProductContext } from "../state/productContext";
+import { ProductAction } from "../state/constants";
 import ProductBackLog from "./ProductBacklog";
 import Sprint from "./Sprint";
 import { Sprints } from "../types/types";
 
-const ProjectContainer = styled.div`
+const ProductContainer = styled.div`
   flex: 1;
   overflow-x: auto;
   min-height: 100%;
@@ -18,21 +18,21 @@ const ProjectContainer = styled.div`
   flex-direction: column;
 `;
 
-const ProjectHeader = styled.div`
+const ProductHeader = styled.div`
   display: flex;
   flex-direction: row;
   align-items: stretch;
   padding: 8px;
 `;
 
-const ProjectTitle = styled.div`
+const ProductTitle = styled.div`
   font-weight: 700;
   font-size: 30px;
   color: white;
   margin-right: 16px;
 `;
 
-const ProjectContent = styled.div`
+const ProductContent = styled.div`
   flex: 1;
   overflow-x: auto;
   display: flex;
@@ -58,7 +58,7 @@ const AddSprintPlusIcon = styled.div`
   margin-right: 12px;
 `;
 
-const onDragEnd = (dispatch: Dispatch<ProjectActionType>) => (result: DropResult): void => {
+const onDragEnd = (dispatch: Dispatch<ProductActionType>) => (result: DropResult): void => {
   // dropped nowhere
   if (!result.destination) {
     return;
@@ -73,7 +73,7 @@ const onDragEnd = (dispatch: Dispatch<ProjectActionType>) => (result: DropResult
   if (result.type === "COLUMN") {
     // For now, we can't move columns
     // dispatch({
-    //   type: ProjectAction.REORDER_LIST_POSITION,
+    //   type: ProductAction.REORDER_LIST_POSITION,
     //   initialPosition: source.index,
     //   finalPosition: destination.index,
     // });
@@ -81,17 +81,17 @@ const onDragEnd = (dispatch: Dispatch<ProjectActionType>) => (result: DropResult
   }
 
   dispatch({
-    type: ProjectAction.REORDER_ITEM_POSITION,
+    type: ProductAction.REORDER_ITEM_POSITION,
     source,
     destination,
     itemId: result.draggableId,
   });
 };
 
-const Project = () => {
-  const { projectData, dispatch } = useContext(ProjectContext);
+const Product = () => {
+  const { productData, dispatch } = useContext(ProductContext);
 
-  if (!projectData) {
+  if (!productData) {
     return <div>loading</div>;
   }
 
@@ -110,7 +110,7 @@ const Project = () => {
     const startDate = new Date();
     const endDate = new Date();
     dispatch({
-      type: ProjectAction.CREATE_SPRINT,
+      type: ProductAction.CREATE_SPRINT,
       sprintId: id,
       goal,
       startDate,
@@ -120,27 +120,27 @@ const Project = () => {
 
   const sortFn = (data: Sprints) => (a: string, b: string) => data[a].position - data[b].position;
 
-  const sprintIds: string[] = Object.keys(projectData.sprints).sort(sortFn(projectData.sprints));
-  const backlogIds: string[] = Object.keys(projectData.backlog);
+  const sprintIds: string[] = Object.keys(productData.sprints).sort(sortFn(productData.sprints));
+  const backlogIds: string[] = Object.keys(productData.backlog);
 
   return (
     <DragDropContext onBeforeDragStart={onBeforeDragStart} onDragEnd={onDragEnd(dispatch)}>
       <Droppable droppableId="board" type="COLUMN" direction="horizontal">
         {(provided) => (
-          <ProjectContainer ref={provided.innerRef} {...provided.droppableProps}>
-            <ProjectHeader>
-              <ProjectTitle>{projectData.project_title}</ProjectTitle>
+          <ProductContainer ref={provided.innerRef} {...provided.droppableProps}>
+            <ProductHeader>
+              <ProductTitle>{productData.product_title}</ProductTitle>
               <AddSprintButton type="button" onClick={() => addSprint()}>
                 <AddSprintPlusIcon>+</AddSprintPlusIcon>
                 Add Sprint
               </AddSprintButton>
-            </ProjectHeader>
-            <ProjectContent>
+            </ProductHeader>
+            <ProductContent>
               {backlogIds.map((backlogId) => (
                 <ProductBackLog
                   key={backlogId}
                   listId={backlogId}
-                  listData={projectData.backlog[backlogId]}
+                  listData={productData.backlog[backlogId]}
                 />
               ))}
 
@@ -148,11 +148,11 @@ const Project = () => {
                 <Sprint key={sprintId} sprintId={sprintId} />
               ))}
               {provided.placeholder}
-            </ProjectContent>
-          </ProjectContainer>
+            </ProductContent>
+          </ProductContainer>
         )}
       </Droppable>
     </DragDropContext>
   );
 };
-export default Project;
+export default Product;

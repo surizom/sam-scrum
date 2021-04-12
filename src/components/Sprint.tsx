@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useContext } from "react";
 import styled from "styled-components";
-import { ProjectContext } from "../state/projectContext";
+import { ProductContext } from "../state/productContext";
 import { Columns } from "../types/types";
 import AddList from "./AddList";
 import List from "./List";
@@ -76,13 +76,13 @@ type SprintProps = {
   sprintId: string;
 };
 const Sprint = ({ sprintId }: SprintProps) => {
-  const { projectData } = useContext(ProjectContext);
-  const sprint = projectData.sprints[sprintId];
+  const { productData } = useContext(ProductContext);
+  const sprint = productData.sprints[sprintId];
 
   const sortFn = (data: Columns) => (a: string, b: string) => data[a].position - data[b].position;
 
-  const listIds: string[] = Object.keys(projectData.sprints[sprintId].data).sort(
-    sortFn(projectData.sprints[sprintId].data)
+  const listIds: string[] = Object.keys(productData.sprints[sprintId].data).sort(
+    sortFn(productData.sprints[sprintId].data)
   );
   return (
     <SprintWrapper>
@@ -103,7 +103,7 @@ const Sprint = ({ sprintId }: SprintProps) => {
             key={listId}
             sprintId={sprintId}
             listId={listId}
-            listData={projectData.sprints[sprintId].data[listId]}
+            listData={productData.sprints[sprintId].data[listId]}
           />
         ))}
         <AddList sprintId={sprintId} />

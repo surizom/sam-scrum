@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
-import Project from "./components/Project";
-import { ProjectProvider } from "./state/projectContext";
+import Product from "./components/Product";
+import { ProductProvider } from "./state/productContext";
 
 const Heading = styled.div`
   flex: 0;
@@ -59,7 +59,7 @@ const Container = styled.div`
 
 const App = () => (
   <Container>
-    <ProjectProvider>
+    <ProductProvider>
       <Heading>
         <LogoSquare>
           <LogoRectangle1 />
@@ -67,8 +67,8 @@ const App = () => (
         </LogoSquare>
         <Title>Sam</Title>
       </Heading>
-      <Project />
-    </ProjectProvider>
+      <Product />
+    </ProductProvider>
   </Container>
 );
 

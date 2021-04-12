@@ -1,17 +1,17 @@
 /* eslint-disable import/prefer-default-export */
 import { omit } from "lodash";
-import { ProjectData } from "../../types/types";
+import { ProductData } from "../../types/types";
 import { someItemsNotDone } from "./closeSprintUtils";
 
 export const createSprint = ({
-  projectData,
+  productData,
   id,
   goal,
   startDate,
   endDate,
   isOpen,
 }: {
-  projectData: ProjectData;
+  productData: ProductData;
   id: string;
   goal: string;
   startDate: Date;
@@ -21,11 +21,11 @@ export const createSprint = ({
   if (startDate > endDate) {
     throw new Error("End date must be after start date");
   }
-  const position = Object.keys(projectData.sprints).length;
-  const newProjectData: ProjectData = {
-    ...projectData,
+  const position = Object.keys(productData.sprints).length;
+  const newProductData: ProductData = {
+    ...productData,
     sprints: {
-      ...projectData.sprints,
+      ...productData.sprints,
       [id]: {
         data: {},
         goal,
@@ -36,30 +36,30 @@ export const createSprint = ({
       },
     },
   };
-  return newProjectData;
+  return newProductData;
 };
 
-export const closeSprint = ({ projectData, id }: { projectData: ProjectData; id: string }) => {
-  if (someItemsNotDone(projectData.sprints[id])) {
+export const closeSprint = ({ productData, id }: { productData: ProductData; id: string }) => {
+  if (someItemsNotDone(productData.sprints[id])) {
     throw new Error("All items must be in done state in order to close sprint");
   }
-  const newProjectData: ProjectData = {
-    ...projectData,
+  const newProductData: ProductData = {
+    ...productData,
     sprints: {
-      ...projectData.sprints,
+      ...productData.sprints,
       [id]: {
-        ...projectData.sprints[id],
+        ...productData.sprints[id],
         isOpen: false,
       },
     },
   };
-  return newProjectData;
+  return newProductData;
 };
 
-export const deleteSprint = ({ projectData, id }: { projectData: ProjectData; id: string }) => {
-  const newProjectData: ProjectData = {
-    ...projectData,
-    sprints: omit(projectData.sprints, [id]),
+export const deleteSprint = ({ productData, id }: { productData: ProductData; id: string }) => {
+  const newProductData: ProductData = {
+    ...productData,
+    sprints: omit(productData.sprints, [id]),
   };
-  return newProjectData;
+  return newProductData;
 };

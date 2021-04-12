@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import styled from "styled-components";
-import { ProjectAction } from "../state/constants";
-import { ProjectContext } from "../state/projectContext";
+import { ProductAction } from "../state/constants";
+import { ProductContext } from "../state/productContext";
 import AutoSizeTextArea from "./AutoSizeTextArea";
 
 const Button = styled.div`
@@ -27,7 +27,7 @@ type AddItemProps = {
 const AddItem = ({ listId, sprintId }: AddItemProps) => {
   const [compose, setCompose] = useState<boolean>(false);
 
-  const { dispatch } = useContext(ProjectContext);
+  const { dispatch } = useContext(ProductContext);
 
   if (!compose) {
     return (
@@ -38,7 +38,7 @@ const AddItem = ({ listId, sprintId }: AddItemProps) => {
   }
 
   const onSave = (content: string) => {
-    dispatch({ type: ProjectAction.ADD_ITEM, sprintId, listId, content });
+    dispatch({ type: ProductAction.ADD_ITEM, sprintId, listId, content });
     setCompose(false);
   };
 

@@ -4,8 +4,8 @@ import styled from "styled-components";
 import { Draggable } from "react-beautiful-dnd";
 import { Item as ItemType } from "../types/types";
 import AutoSizeTextArea from "./AutoSizeTextArea";
-import { ProjectContext } from "../state/projectContext";
-import { ProjectAction } from "../state/constants";
+import { ProductContext } from "../state/productContext";
+import { ProductAction } from "../state/constants";
 
 const Delete = styled.div`
   position: absolute;
@@ -60,10 +60,10 @@ type ItemProps = {
 const Item = ({ listId, itemId, itemData, sprintId }: ItemProps) => {
   const [editMode, setEditMode] = useState<boolean>(false);
 
-  const { dispatch } = useContext(ProjectContext);
+  const { dispatch } = useContext(ProductContext);
 
   const onSave = (content: string) => {
-    dispatch({ type: ProjectAction.UPDATE_ITEM, sprintId, listId, itemId, content });
+    dispatch({ type: ProductAction.UPDATE_ITEM, sprintId, listId, itemId, content });
     setEditMode(false);
   };
 
@@ -72,7 +72,7 @@ const Item = ({ listId, itemId, itemData, sprintId }: ItemProps) => {
   };
 
   const deleteClick = () => {
-    dispatch({ type: ProjectAction.DELETE_ITEM, sprintId, listId, itemId });
+    dispatch({ type: ProductAction.DELETE_ITEM, sprintId, listId, itemId });
   };
 
   return (

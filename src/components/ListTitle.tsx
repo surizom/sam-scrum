@@ -2,8 +2,8 @@
 import React, { HTMLAttributes, useContext, useState } from "react";
 import styled from "styled-components";
 import AutoSizeTextArea from "./AutoSizeTextArea";
-import { ProjectAction } from "../state/constants";
-import { ProjectContext } from "../state/projectContext";
+import { ProductAction } from "../state/constants";
+import { ProductContext } from "../state/productContext";
 
 const Delete = styled.div`
   position: absolute;
@@ -53,7 +53,7 @@ const ListTitle = ({
   const [editMode, setEditMode] = useState<boolean>(false);
   const [updateValue, setUpdateValue] = useState<string>(title);
 
-  const { dispatch } = useContext(ProjectContext);
+  const { dispatch } = useContext(ProductContext);
 
   const onSave =
     sprintId === undefined
@@ -65,7 +65,7 @@ const ListTitle = ({
             setTimeout(() => setUpdateValue(title), 0);
           } else {
             dispatch({
-              type: ProjectAction.UPDATE_LIST_TITLE,
+              type: ProductAction.UPDATE_LIST_TITLE,
               sprintId,
               listId,
               listTitle: _title,
@@ -85,7 +85,7 @@ const ListTitle = ({
     sprintId === undefined
       ? () => {}
       : () => {
-          dispatch({ type: ProjectAction.DELETE_LIST, sprintId, listId });
+          dispatch({ type: ProductAction.DELETE_LIST, sprintId, listId });
         };
 
   return (

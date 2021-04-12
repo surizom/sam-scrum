@@ -24,8 +24,8 @@ export type Sprint = {
 export type Sprints = {
   [id: string]: Sprint;
 };
-export type ProjectData = {
-  project_title: string;
+export type ProductData = {
+  product_title: string;
   sprints: Sprints;
   backlog: Columns;
 };

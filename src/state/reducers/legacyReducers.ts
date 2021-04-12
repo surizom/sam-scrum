@@ -3,7 +3,7 @@ import { DraggableLocation } from "react-beautiful-dnd";
 import { v4 as uuidv4 } from "uuid";
 import { omit, cloneDeep } from "lodash";
 
-import { ProjectData, Item, Items, Column } from "../../types/types";
+import { ProductData, Item, Items, Column } from "../../types/types";
 
 const moveItemWithinSameList = ({
   sourceIndex,
@@ -53,23 +53,23 @@ type FindSprintIdReturnType =
     };
 
 const findSprintIdByColumnId = (
-  projectData: ProjectData,
+  productData: ProductData,
   columnId: string
 ): FindSprintIdReturnType => {
-  if (Object.keys(projectData.backlog).includes(columnId)) {
+  if (Object.keys(productData.backlog).includes(columnId)) {
     return {
       type: "BACKLOG",
-      items: projectData.backlog[columnId].items,
+      items: productData.backlog[columnId].items,
     };
   }
-  for (const sprintId in projectData.sprints) {
-    if (Object.prototype.hasOwnProperty.call(projectData.sprints, sprintId)) {
-      const sprint = projectData.sprints[sprintId];
+  for (const sprintId in productData.sprints) {
+    if (Object.prototype.hasOwnProperty.call(productData.sprints, sprintId)) {
+      const sprint = productData.sprints[sprintId];
       if (Object.keys(sprint.data).includes(columnId)) {
         return {
           type: "SPRINT",
           sprintId,
-          items: projectData.sprints[sprintId].data[columnId].items,
+          items: productData.sprints[sprintId].data[columnId].items,
         };
       }
     }
@@ -81,16 +81,16 @@ const findSprintIdByColumnId = (
 };
 
 export const reorderItemPosition = (
-  projectData: ProjectData,
+  productData: ProductData,
   source: DraggableLocation,
   destination: DraggableLocation,
   itemId: string
-): ProjectData => {
+): ProductData => {
   // moving item within same list
   if (source.droppableId === destination.droppableId) {
-    const sprint = findSprintIdByColumnId(projectData, source.droppableId);
+    const sprint = findSprintIdByColumnId(productData, source.droppableId);
     if (sprint.type === "ERROR") {
-      throw new Error("ColumnId not found in projectData");
+      throw new Error("ColumnId not found in productData");
     }
     const { items } = sprint;
 
@@ -104,19 +104,19 @@ export const reorderItemPosition = (
         }),
       ])
     );
-    const newProjectData = cloneDeep(projectData);
+    const newProductData = cloneDeep(productData);
     if (sprint.type === "SPRINT") {
-      newProjectData.sprints[sprint.sprintId].data[source.droppableId].items = newItems;
+      newProductData.sprints[sprint.sprintId].data[source.droppableId].items = newItems;
     } else if (sprint.type === "BACKLOG") {
-      newProjectData.backlog[source.droppableId].items = newItems;
+      newProductData.backlog[source.droppableId].items = newItems;
     }
 
-    return newProjectData;
+    return newProductData;
   }
   // moving item between different columns
-  const sourceSprint = findSprintIdByColumnId(projectData, source.droppableId);
+  const sourceSprint = findSprintIdByColumnId(productData, source.droppableId);
   if (sourceSprint.type === "ERROR") {
-    throw new Error("ColumnId not found in projectData");
+    throw new Error("ColumnId not found in productData");
   }
   const sourceItems = Object.fromEntries(
     Object.entries(sourceSprint.items).map(([key, value]) => [
@@ -128,9 +128,9 @@ export const reorderItemPosition = (
     ])
   );
 
-  const destinationSprint = findSprintIdByColumnId(projectData, destination.droppableId);
+  const destinationSprint = findSprintIdByColumnId(productData, destination.droppableId);
   if (destinationSprint.type === "ERROR") {
-    throw new Error("ColumnId not found in projectData");
+    throw new Error("ColumnId not found in productData");
   }
   const destinationItems = Object.fromEntries(
     Object.entries(destinationSprint.items).map(([key, value]) => [
@@ -147,87 +147,87 @@ export const reorderItemPosition = (
     position: destination.index,
   };
 
-  const newProjectData = cloneDeep(projectData);
+  const newProductData = cloneDeep(productData);
 
   if (sourceSprint.type === "SPRINT") {
     if (destinationSprint.type === "SPRINT") {
-      newProjectData.sprints[sourceSprint.sprintId].data[source.droppableId].items = sourceItems;
-      newProjectData.sprints[destinationSprint.sprintId].data[
+      newProductData.sprints[sourceSprint.sprintId].data[source.droppableId].items = sourceItems;
+      newProductData.sprints[destinationSprint.sprintId].data[
         destination.droppableId
       ].items = destinationItems;
-      newProjectData.sprints[destinationSprint.sprintId].data[destination.droppableId].items[
+      newProductData.sprints[destinationSprint.sprintId].data[destination.droppableId].items[
         itemId
       ] = movingItem;
-      delete newProjectData.sprints[sourceSprint.sprintId].data[source.droppableId].items[itemId];
+      delete newProductData.sprints[sourceSprint.sprintId].data[source.droppableId].items[itemId];
     } else {
-      newProjectData.sprints[sourceSprint.sprintId].data[source.droppableId].items = sourceItems;
-      newProjectData.backlog[destination.droppableId].items = destinationItems;
-      newProjectData.backlog[destination.droppableId].items[itemId] = movingItem;
-      delete newProjectData.sprints[sourceSprint.sprintId].data[source.droppableId].items[itemId];
+      newProductData.sprints[sourceSprint.sprintId].data[source.droppableId].items = sourceItems;
+      newProductData.backlog[destination.droppableId].items = destinationItems;
+      newProductData.backlog[destination.droppableId].items[itemId] = movingItem;
+      delete newProductData.sprints[sourceSprint.sprintId].data[source.droppableId].items[itemId];
     }
   } else if (sourceSprint.type === "BACKLOG") {
     if (destinationSprint.type === "SPRINT") {
-      newProjectData.backlog[source.droppableId].items = sourceItems;
-      newProjectData.sprints[destinationSprint.sprintId].data[
+      newProductData.backlog[source.droppableId].items = sourceItems;
+      newProductData.sprints[destinationSprint.sprintId].data[
         destination.droppableId
       ].items = destinationItems;
-      newProjectData.sprints[destinationSprint.sprintId].data[destination.droppableId].items[
+      newProductData.sprints[destinationSprint.sprintId].data[destination.droppableId].items[
         itemId
       ] = movingItem;
-      delete newProjectData.backlog[source.droppableId].items[itemId];
+      delete newProductData.backlog[source.droppableId].items[itemId];
     } else {
-      newProjectData.backlog[source.droppableId].items = sourceItems;
-      newProjectData.backlog[destination.droppableId].items = destinationItems;
-      newProjectData.backlog[destination.droppableId].items[itemId] = movingItem;
-      delete newProjectData.backlog[source.droppableId].items[itemId];
+      newProductData.backlog[source.droppableId].items = sourceItems;
+      newProductData.backlog[destination.droppableId].items = destinationItems;
+      newProductData.backlog[destination.droppableId].items[itemId] = movingItem;
+      delete newProductData.backlog[source.droppableId].items[itemId];
     }
   }
 
-  return newProjectData;
+  return newProductData;
 };
 
 export const addItem = ({
-  projectData,
+  productData,
   sprintId,
   listId,
   content,
 }: {
-  projectData: ProjectData;
+  productData: ProductData;
   sprintId?: string;
   listId: string;
   content: string;
-}): ProjectData => {
+}): ProductData => {
   const listItems: Items =
     sprintId === undefined
-      ? projectData.backlog[listId].items
-      : projectData.sprints[sprintId].data[listId].items;
+      ? productData.backlog[listId].items
+      : productData.sprints[sprintId].data[listId].items;
   const position: number = Object.keys(listItems).length;
   const item: Item = { position, item_content: content };
   const newId = uuidv4();
 
-  const newProjectData = cloneDeep(projectData);
+  const newProductData = cloneDeep(productData);
   if (sprintId === undefined) {
-    newProjectData.backlog[listId].items[newId] = item;
+    newProductData.backlog[listId].items[newId] = item;
   } else {
-    newProjectData.sprints[sprintId].data[listId].items[newId] = item;
+    newProductData.sprints[sprintId].data[listId].items[newId] = item;
   }
-  return newProjectData;
+  return newProductData;
 };
 
 export const updateItem = ({
-  projectData,
+  productData,
   sprintId,
   listId,
   itemId,
   content,
 }: {
-  projectData: ProjectData;
+  productData: ProductData;
   sprintId?: string;
   listId: string;
   itemId: string;
   content: string;
-}): ProjectData => {
-  const newItemData = cloneDeep(projectData);
+}): ProductData => {
+  const newItemData = cloneDeep(productData);
   if (sprintId === undefined) {
     newItemData.backlog[listId].items[itemId].item_content = content;
     return newItemData;
@@ -237,47 +237,47 @@ export const updateItem = ({
 };
 
 export const addList = (
-  projectData: ProjectData,
+  productData: ProductData,
   sprintId: string,
   listTitle: string
-): ProjectData => {
-  const position: number = Object.keys(projectData.sprints[sprintId].data).length;
+): ProductData => {
+  const position: number = Object.keys(productData.sprints[sprintId].data).length;
   const list: Column = { position, list_title: listTitle, items: {} };
   const newId = uuidv4();
 
-  const newBoardData = cloneDeep(projectData);
+  const newBoardData = cloneDeep(productData);
   newBoardData.sprints[sprintId].data[newId] = list;
   return newBoardData;
 };
 
 export const updateListTitle = (
-  projectData: ProjectData,
+  productData: ProductData,
   sprintId: string,
   listId: string,
   listTitle: string
 ) => {
-  const newBoardData = cloneDeep(projectData);
+  const newBoardData = cloneDeep(productData);
   newBoardData.sprints[sprintId].data[listId].list_title = listTitle;
   return newBoardData;
 };
 
-export const deleteList = (projectData: ProjectData, sprintId: string, listId: string) =>
-  omit(projectData, [`sprints.${sprintId}.data.${listId}`]) as ProjectData;
+export const deleteList = (productData: ProductData, sprintId: string, listId: string) =>
+  omit(productData, [`sprints.${sprintId}.data.${listId}`]) as ProductData;
 
 export const deleteItem = ({
-  projectData,
+  productData,
   sprintId,
   listId,
   itemId,
 }: {
-  projectData: ProjectData;
+  productData: ProductData;
   sprintId?: string;
   listId: string;
   itemId: string;
 }) => {
   // if product backlog
   if (sprintId === undefined) {
-    return omit(projectData, [`backlog.${listId}.items.${itemId}`]) as ProjectData;
+    return omit(productData, [`backlog.${listId}.items.${itemId}`]) as ProductData;
   }
-  return omit(projectData, [`sprints.${sprintId}.data.${listId}.items.${itemId}`]) as ProjectData;
+  return omit(productData, [`sprints.${sprintId}.data.${listId}.items.${itemId}`]) as ProductData;
 };

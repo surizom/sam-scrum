@@ -1,7 +1,7 @@
-import { ProjectData } from "../types/types";
+import { ProductData } from "../types/types";
 
-export const INITIAL_PROJECT_DATA: ProjectData = {
-  project_title: "Main Project",
+export const INITIAL_PRODUCT_DATA: ProductData = {
+  product_title: "Main Product",
   sprints: {
     "7cd31ac2-acfc-4912-a6ad-98ecdef9fff5": {
       data: {
@@ -81,7 +81,7 @@ export const INITIAL_PROJECT_DATA: ProjectData = {
   },
 };
 
-export enum ProjectAction {
+export enum ProductAction {
   REORDER_ITEM_POSITION = "reorderItemPosition",
   ADD_ITEM = "addItem",
   UPDATE_ITEM = "updateItem",

@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, ChangeEvent, KeyboardEvent, useContext } from "react";
 import styled from "styled-components";
-import { ProjectAction } from "../state/constants";
-import { ProjectContext } from "../state/projectContext";
+import { ProductAction } from "../state/constants";
+import { ProductContext } from "../state/productContext";
 
 const Container = styled.div`
   width: 272px;
@@ -48,8 +48,8 @@ const AddList = ({ sprintId }: AddListProps) => {
   };
   const refInput = useRef<HTMLInputElement>(null);
 
-  const projectContext = useContext(ProjectContext);
-  const { dispatch } = projectContext;
+  const productContext = useContext(ProductContext);
+  const { dispatch } = productContext;
 
   useEffect(() => {
     if (compose && refInput.current) {
@@ -60,7 +60,7 @@ const AddList = ({ sprintId }: AddListProps) => {
   const onKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.keyCode === 13) {
       // e.preventDefault();
-      dispatch({ type: ProjectAction.ADD_LIST, sprintId, listTitle });
+      dispatch({ type: ProductAction.ADD_LIST, sprintId, listTitle });
       setListTitle("");
       setCompose(false);
     }
@@ -68,7 +68,7 @@ const AddList = ({ sprintId }: AddListProps) => {
 
   const onBlur = () => {
     if (listTitle.length > 0) {
-      dispatch({ type: ProjectAction.ADD_LIST, sprintId, listTitle });
+      dispatch({ type: ProductAction.ADD_LIST, sprintId, listTitle });
       setListTitle("");
     }
     setCompose(false);

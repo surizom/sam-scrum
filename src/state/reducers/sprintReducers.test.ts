@@ -1,14 +1,14 @@
 import { v4 as uuidv4 } from "uuid";
-import { ProjectData } from "../../types/types";
-import { INITIAL_PROJECT_DATA } from "../constants";
+import { ProductData } from "../../types/types";
+import { INITIAL_PRODUCT_DATA } from "../constants";
 import { closeSprint, createSprint, deleteSprint } from "./sprintReducers";
 
 describe("createSprint", () => {
-  test("it should create a sprint if the project is empty", () => {
-    const projectData: ProjectData = {
+  test("it should create a sprint if the product is empty", () => {
+    const productData: ProductData = {
       backlog: {},
       sprints: {},
-      project_title: "My project",
+      product_title: "My product",
     };
 
     const id = uuidv4();
@@ -16,12 +16,12 @@ describe("createSprint", () => {
     const startDate = new Date();
     const endDate = new Date();
 
-    const actualResult = createSprint({ projectData, id, goal, startDate, endDate, isOpen: true });
+    const actualResult = createSprint({ productData, id, goal, startDate, endDate, isOpen: true });
 
-    const expectedResult: ProjectData = {
-      ...projectData,
+    const expectedResult: ProductData = {
+      ...productData,
       sprints: {
-        ...projectData.sprints,
+        ...productData.sprints,
         [id]: {
           data: {},
           goal,
@@ -36,7 +36,7 @@ describe("createSprint", () => {
     expect(actualResult).toStrictEqual(expectedResult);
   });
   test("it should create a sprint without altering the other objects", () => {
-    const projectData = INITIAL_PROJECT_DATA;
+    const productData = INITIAL_PRODUCT_DATA;
 
     const id = uuidv4();
     const goal = "my goal";
@@ -44,12 +44,12 @@ describe("createSprint", () => {
     const endDate = new Date();
     const isOpen = true;
 
-    const actualResult = createSprint({ projectData, id, goal, startDate, endDate, isOpen });
+    const actualResult = createSprint({ productData, id, goal, startDate, endDate, isOpen });
 
-    const expectedResult: ProjectData = {
-      ...projectData,
+    const expectedResult: ProductData = {
+      ...productData,
       sprints: {
-        ...projectData.sprints,
+        ...productData.sprints,
         [id]: {
           data: {},
           goal,
@@ -65,7 +65,7 @@ describe("createSprint", () => {
   });
 
   test("it should throw an error if startDate > endDate", () => {
-    const projectData = INITIAL_PROJECT_DATA;
+    const productData = INITIAL_PRODUCT_DATA;
 
     const id = uuidv4();
     const goal = "my goal";
@@ -73,7 +73,7 @@ describe("createSprint", () => {
     const endDate = new Date("2021-04-09T09:00:00Z");
     const isOpen = true;
 
-    expect(() => createSprint({ projectData, id, goal, startDate, endDate, isOpen })).toThrow(
+    expect(() => createSprint({ productData, id, goal, startDate, endDate, isOpen })).toThrow(
       "End date must be after start date"
     );
   });
@@ -81,14 +81,14 @@ describe("createSprint", () => {
 
 describe("deleteSprint", () => {
   test("it should delete a sprint", () => {
-    const projectData = INITIAL_PROJECT_DATA;
+    const productData = INITIAL_PRODUCT_DATA;
 
     const id = "7cd31ac2-acfc-4912-a6ad-98ecdef9fff5";
 
-    const actualResult = deleteSprint({ projectData, id });
+    const actualResult = deleteSprint({ productData, id });
 
-    const expectedResult: ProjectData = {
-      ...projectData,
+    const expectedResult: ProductData = {
+      ...productData,
       sprints: {},
     };
 
@@ -103,7 +103,7 @@ describe("deleteSprint", () => {
       const endDate = new Date("2021-04-09T09:00:00Z");
       const isOpen = true;
 
-      const projectData: ProjectData = {
+      const productData: ProductData = {
         backlog: {},
         sprints: {
           [id]: {
@@ -115,17 +115,17 @@ describe("deleteSprint", () => {
             isOpen,
           },
         },
-        project_title: "My project",
+        product_title: "My product",
       };
 
-      const actualResult = closeSprint({ projectData, id });
+      const actualResult = closeSprint({ productData, id });
 
-      const expectedResult: ProjectData = {
-        ...projectData,
+      const expectedResult: ProductData = {
+        ...productData,
         sprints: {
-          ...projectData.sprints,
+          ...productData.sprints,
           [id]: {
-            ...projectData.sprints[id],
+            ...productData.sprints[id],
             isOpen: false,
           },
         },
@@ -133,17 +133,17 @@ describe("deleteSprint", () => {
       expect(actualResult).toStrictEqual(expectedResult);
     });
     test("it should not close sprint if there are items in state other than done", () => {
-      const projectData: ProjectData = INITIAL_PROJECT_DATA;
+      const productData: ProductData = INITIAL_PRODUCT_DATA;
 
       const id = "7cd31ac2-acfc-4912-a6ad-98ecdef9fff5";
 
-      expect(() => closeSprint({ projectData, id })).toThrow(
+      expect(() => closeSprint({ productData, id })).toThrow(
         "All items must be in done state in order to close sprint"
       );
     });
 
-    const PROJECT_DATA_ALL_DONE: ProjectData = {
-      project_title: "Main Project",
+    const PRODUCT_DATA_ALL_DONE: ProductData = {
+      product_title: "Main Product",
       sprints: {
         "7cd31ac2-acfc-4912-a6ad-98ecdef9fff5": {
           data: {
@@ -182,18 +182,18 @@ describe("deleteSprint", () => {
     };
 
     test("it should not close sprint if there are items in state other than done", () => {
-      const projectData: ProjectData = PROJECT_DATA_ALL_DONE;
+      const productData: ProductData = PRODUCT_DATA_ALL_DONE;
 
       const id = "7cd31ac2-acfc-4912-a6ad-98ecdef9fff5";
 
-      const actualResult: ProjectData = closeSprint({ projectData, id });
+      const actualResult: ProductData = closeSprint({ productData, id });
 
-      const expectedResult: ProjectData = {
-        ...projectData,
+      const expectedResult: ProductData = {
+        ...productData,
         sprints: {
-          ...projectData.sprints,
+          ...productData.sprints,
           [id]: {
-            ...projectData.sprints[id],
+            ...productData.sprints[id],
             isOpen: false,
           },
         },
