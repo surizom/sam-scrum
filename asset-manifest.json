@@ -1,22 +1,22 @@
 {
   "files": {
     "main.css": "/sam-scrum/static/css/main.c4cc67fb.chunk.css",
-    "main.js": "/sam-scrum/static/js/main.8a14906e.chunk.js",
-    "main.js.map": "/sam-scrum/static/js/main.8a14906e.chunk.js.map",
+    "main.js": "/sam-scrum/static/js/main.7d0a1440.chunk.js",
+    "main.js.map": "/sam-scrum/static/js/main.7d0a1440.chunk.js.map",
     "runtime-main.js": "/sam-scrum/static/js/runtime-main.7da31406.js",
     "runtime-main.js.map": "/sam-scrum/static/js/runtime-main.7da31406.js.map",
-    "static/js/2.24901475.chunk.js": "/sam-scrum/static/js/2.24901475.chunk.js",
-    "static/js/2.24901475.chunk.js.map": "/sam-scrum/static/js/2.24901475.chunk.js.map",
+    "static/js/2.d5064ef0.chunk.js": "/sam-scrum/static/js/2.d5064ef0.chunk.js",
+    "static/js/2.d5064ef0.chunk.js.map": "/sam-scrum/static/js/2.d5064ef0.chunk.js.map",
     "static/js/3.b67ed732.chunk.js": "/sam-scrum/static/js/3.b67ed732.chunk.js",
     "static/js/3.b67ed732.chunk.js.map": "/sam-scrum/static/js/3.b67ed732.chunk.js.map",
     "index.html": "/sam-scrum/index.html",
     "static/css/main.c4cc67fb.chunk.css.map": "/sam-scrum/static/css/main.c4cc67fb.chunk.css.map",
-    "static/js/2.24901475.chunk.js.LICENSE.txt": "/sam-scrum/static/js/2.24901475.chunk.js.LICENSE.txt"
+    "static/js/2.d5064ef0.chunk.js.LICENSE.txt": "/sam-scrum/static/js/2.d5064ef0.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.7da31406.js",
-    "static/js/2.24901475.chunk.js",
+    "static/js/2.d5064ef0.chunk.js",
     "static/css/main.c4cc67fb.chunk.css",
-    "static/js/main.8a14906e.chunk.js"
+    "static/js/main.7d0a1440.chunk.js"
   ]
 }
