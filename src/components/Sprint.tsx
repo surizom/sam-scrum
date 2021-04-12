@@ -2,6 +2,7 @@
 import React, { useContext } from "react";
 import styled from "styled-components";
 import { ProductContext } from "../state/productContext";
+import { ProductAction } from "../state/constants";
 import { Columns } from "../types/types";
 import AddList from "./AddList";
 import List from "./List";
@@ -76,7 +77,7 @@ type SprintProps = {
   sprintId: string;
 };
 const Sprint = ({ sprintId }: SprintProps) => {
-  const { productData } = useContext(ProductContext);
+  const { productData, dispatch } = useContext(ProductContext);
   const sprint = productData.sprints[sprintId];
 
   const sortFn = (data: Columns) => (a: string, b: string) => data[a].position - data[b].position;
@@ -84,6 +85,7 @@ const Sprint = ({ sprintId }: SprintProps) => {
   const listIds: string[] = Object.keys(productData.sprints[sprintId].data).sort(
     sortFn(productData.sprints[sprintId].data)
   );
+
   return (
     <SprintWrapper>
       <SprintHeader>
@@ -92,8 +94,16 @@ const Sprint = ({ sprintId }: SprintProps) => {
           <span>durée - date-debut - date fin</span>
         </SprintHeaderSide>
         <SprintHeaderSide>
-          <DeleteSprintButton>Delete Sprint</DeleteSprintButton>
-          <CloseSprintButton>Close Sprint</CloseSprintButton>
+          <DeleteSprintButton
+            onClick={() => dispatch({ type: ProductAction.DELETE_SPRINT, sprintId })}
+          >
+            Delete Sprint
+          </DeleteSprintButton>
+          <CloseSprintButton
+            onClick={() => dispatch({ type: ProductAction.CLOSE_SPRINT, sprintId })}
+          >
+            Close Sprint
+          </CloseSprintButton>
         </SprintHeaderSide>
       </SprintHeader>
       <SprintSubtitle>{sprint.goal}</SprintSubtitle>
