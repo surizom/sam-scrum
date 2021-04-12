@@ -118,7 +118,7 @@ const Product = () => {
     });
   };
 
-  const sortFn = (data: Sprints) => (a: string, b: string) => data[a].position - data[b].position;
+  const sortFn = (data: Sprints) => (a: string, b: string) => data[b].position - data[a].position;
 
   const sprintIds: string[] = Object.keys(productData.sprints).sort(sortFn(productData.sprints));
   const backlogIds: string[] = Object.keys(productData.backlog);
