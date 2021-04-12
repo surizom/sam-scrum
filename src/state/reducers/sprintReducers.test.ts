@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
-import { ProjectData } from "../../types/types";
+import { Column, ProjectData } from "../../types/types";
 import { INITIAL_PROJECT_DATA } from "../constants";
 import { closeSprint, createSprint } from "./sprintReducers";
 
@@ -18,7 +18,17 @@ describe("createSprint", () => {
 
     const actualResult = createSprint({ projectData, id, goal, startDate, endDate, isOpen: true });
 
-    const expectedResult: ProjectData = {
+    const actualResultWithoutColumns: ProjectData = {
+      ...actualResult,
+      sprints: {
+        ...actualResult.sprints,
+        [id]: {
+          ...actualResult.sprints[id],
+          data: {},
+        },
+      },
+    };
+    const expectedResultWithoutColumns: ProjectData = {
       ...projectData,
       sprints: {
         ...projectData.sprints,
@@ -32,8 +42,27 @@ describe("createSprint", () => {
         },
       },
     };
+    expect(actualResultWithoutColumns).toStrictEqual(expectedResultWithoutColumns);
 
-    expect(actualResult).toStrictEqual(expectedResult);
+    const actualColumns: Column[] = Object.values(actualResult.sprints[id].data);
+    const expectedColumns: Column[] = [
+      {
+        items: {},
+        list_title: "Sprint Backlog",
+        position: 0,
+      },
+      {
+        items: {},
+        list_title: "Doing",
+        position: 1,
+      },
+      {
+        items: {},
+        list_title: "Done",
+        position: 2,
+      },
+    ];
+    expect(actualColumns).toStrictEqual(expectedColumns);
   });
   test("it should create a sprint without altering the other objects", () => {
     const projectData = INITIAL_PROJECT_DATA;
@@ -46,7 +75,17 @@ describe("createSprint", () => {
 
     const actualResult = createSprint({ projectData, id, goal, startDate, endDate, isOpen });
 
-    const expectedResult: ProjectData = {
+    const actualResultWithoutColumns: ProjectData = {
+      ...actualResult,
+      sprints: {
+        ...actualResult.sprints,
+        [id]: {
+          ...actualResult.sprints[id],
+          data: {},
+        },
+      },
+    };
+    const expectedResultWithoutColumns: ProjectData = {
       ...projectData,
       sprints: {
         ...projectData.sprints,
@@ -60,8 +99,27 @@ describe("createSprint", () => {
         },
       },
     };
+    expect(actualResultWithoutColumns).toStrictEqual(expectedResultWithoutColumns);
 
-    expect(actualResult).toStrictEqual(expectedResult);
+    const actualColumns: Column[] = Object.values(actualResult.sprints[id].data);
+    const expectedColumns: Column[] = [
+      {
+        items: {},
+        list_title: "Sprint Backlog",
+        position: 0,
+      },
+      {
+        items: {},
+        list_title: "Doing",
+        position: 1,
+      },
+      {
+        items: {},
+        list_title: "Done",
+        position: 2,
+      },
+    ];
+    expect(actualColumns).toStrictEqual(expectedColumns);
   });
 
   test("it should throw an error if startDate > endDate", () => {
