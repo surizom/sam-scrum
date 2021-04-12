@@ -73,7 +73,7 @@ describe("createSprint", () => {
     const endDate = new Date("2021-04-09T09:00:00Z");
     const isOpen = true;
 
-    expect(() => createSprint({ projectData, id, goal, startDate, endDate, isOpen: true })).toThrow(
+    expect(() => createSprint({ projectData, id, goal, startDate, endDate, isOpen })).toThrow(
       "End date must be after start date"
     );
   });
@@ -96,7 +96,7 @@ describe("closeSprint", () => {
           startDate,
           endDate,
           position: 0,
-          isOpen: true,
+          isOpen,
         },
       },
       project_title: "My project",
