@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/sam-scrum/static/css/main.c4cc67fb.chunk.css",
-    "main.js": "/sam-scrum/static/js/main.78814292.chunk.js",
-    "main.js.map": "/sam-scrum/static/js/main.78814292.chunk.js.map",
+    "main.js": "/sam-scrum/static/js/main.4923c85d.chunk.js",
+    "main.js.map": "/sam-scrum/static/js/main.4923c85d.chunk.js.map",
     "runtime-main.js": "/sam-scrum/static/js/runtime-main.1115e285.js",
     "runtime-main.js.map": "/sam-scrum/static/js/runtime-main.1115e285.js.map",
     "static/js/2.298c4cce.chunk.js": "/sam-scrum/static/js/2.298c4cce.chunk.js",
@@ -17,6 +17,6 @@
     "static/js/runtime-main.1115e285.js",
     "static/js/2.298c4cce.chunk.js",
     "static/css/main.c4cc67fb.chunk.css",
-    "static/js/main.78814292.chunk.js"
+    "static/js/main.4923c85d.chunk.js"
   ]
 }
