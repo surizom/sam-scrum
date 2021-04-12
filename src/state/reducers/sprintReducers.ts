@@ -60,9 +60,9 @@ export const createSprint = ({
   return newProductData;
 };
 
-export const closeSprint = ({ productData, id }: { productData: ProductData; id: string }) => {
+export const endSprint = ({ productData, id }: { productData: ProductData; id: string }) => {
   if (someItemsNotDone(productData.sprints[id])) {
-    throw new Error("All items must be in done state in order to close sprint");
+    throw new Error("All items must be in done state in order to end sprint");
   }
 
   const doneColumnEntry = Object.entries(productData.sprints[id].data).find(

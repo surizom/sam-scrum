@@ -62,7 +62,7 @@ const DeleteSprintButton = styled.button`
   margin-right: 16px;
 `;
 
-const CloseSprintButton = styled.button`
+const EndSprintButton = styled.button`
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -97,7 +97,7 @@ const Sprint = ({ sprintId }: SprintProps) => {
 
   const { isOpen } = sprint;
 
-  const prefix = isOpen ? "" : "[CLOSED] ";
+  const prefix = isOpen ? "" : "[ENDED] ";
 
   return (
     <SprintWrapper isOpen={isOpen}>
@@ -119,12 +119,11 @@ const Sprint = ({ sprintId }: SprintProps) => {
           >
             Delete Sprint
           </DeleteSprintButton>
+
           {sprint.isOpen && (
-            <CloseSprintButton
-              onClick={() => dispatch({ type: ProductAction.CLOSE_SPRINT, sprintId })}
-            >
+            <EndSprintButton onClick={() => dispatch({ type: ProductAction.END_SPRINT, sprintId })}>
               Close Sprint
-            </CloseSprintButton>
+            </EndSprintButton>
           )}
         </SprintHeaderSide>
       </SprintHeader>

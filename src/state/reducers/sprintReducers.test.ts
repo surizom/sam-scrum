@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from "uuid";
 import { ProductData } from "../../types/types";
 import { INITIAL_PRODUCT_DATA } from "../constants";
-import { closeSprint, createSprint, deleteSprint } from "./sprintReducers";
+import { endSprint, createSprint, deleteSprint } from "./sprintReducers";
 import { isSameSprintAndDefaultColumns } from "./sprintUtils";
 
 describe("createSprint", () => {
@@ -108,14 +108,14 @@ describe("deleteSprint", () => {
     expect(actualResult).toStrictEqual(expectedResult);
   });
 
-  describe("closeSprint", () => {
-    test("it should not close sprint if there are items in state other than done", () => {
+  describe("endSprint", () => {
+    test("it should not end sprint if there are items in state other than done", () => {
       const productData: ProductData = INITIAL_PRODUCT_DATA;
 
       const id = "7cd31ac2-acfc-4912-a6ad-98ecdef9fff5";
 
-      expect(() => closeSprint({ productData, id })).toThrow(
-        "All items must be in done state in order to close sprint"
+      expect(() => endSprint({ productData, id })).toThrow(
+        "All items must be in done state in order to end sprint"
       );
     });
 
@@ -153,12 +153,12 @@ describe("deleteSprint", () => {
       backlog: {},
     };
 
-    test("it should close sprint if all items done", () => {
+    test("it should end sprint if all items done", () => {
       const productData: ProductData = PRODUCT_DATA_ALL_DONE;
 
       const id = "7cd31ac2-acfc-4912-a6ad-98ecdef9fff5";
 
-      const actualResult: ProductData = closeSprint({ productData, id });
+      const actualResult: ProductData = endSprint({ productData, id });
 
       const expectedResult: ProductData = {
         ...productData,
@@ -174,12 +174,12 @@ describe("deleteSprint", () => {
       expect(actualResult).toStrictEqual(expectedResult);
     });
 
-    test("it should delete columns other than done on sprint close", () => {
+    test("it should delete columns other than done on sprint end", () => {
       const productData: ProductData = PRODUCT_DATA_ALL_DONE;
 
       const id = "7cd31ac2-acfc-4912-a6ad-98ecdef9fff5";
 
-      const actualResult: ProductData = closeSprint({ productData, id });
+      const actualResult: ProductData = endSprint({ productData, id });
 
       const expectedResult: ProductData = {
         ...productData,

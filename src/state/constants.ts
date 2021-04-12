@@ -90,5 +90,5 @@ export enum ProductAction {
   UPDATE_LIST_TITLE = "updateListTitle",
   CREATE_SPRINT = "createSprint",
   DELETE_SPRINT = "deleteSprint",
-  CLOSE_SPRINT = "closeSprint",
+  END_SPRINT = "endSprint",
 }

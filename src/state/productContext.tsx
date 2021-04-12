@@ -12,7 +12,7 @@ import {
 } from "./reducers/boardDataReducers";
 
 import { INITIAL_PRODUCT_DATA, ProductAction } from "./constants";
-import { closeSprint, deleteSprint } from "./reducers/sprintReducers";
+import { endSprint, deleteSprint } from "./reducers/sprintReducers";
 import { catchErrorWithAlert } from "./productContextUtils";
 
 interface Props {
@@ -57,7 +57,7 @@ export type ProductActionType =
       endDate: Date;
     }
   | { type: ProductAction.DELETE_SPRINT; sprintId: string }
-  | { type: ProductAction.CLOSE_SPRINT; sprintId: string };
+  | { type: ProductAction.END_SPRINT; sprintId: string };
 
 export const ProductProvider: React.FC<Props> = ({ children }) => {
   function reducer(state: ProductData, action: ProductActionType) {
@@ -99,11 +99,11 @@ export const ProductProvider: React.FC<Props> = ({ children }) => {
           endDate: action.endDate,
           isOpen: true,
         });
-      case ProductAction.CLOSE_SPRINT:
+      case ProductAction.END_SPRINT:
         return catchErrorWithAlert(
-          () => closeSprint({ productData: state, id: action.sprintId }),
+          () => endSprint({ productData: state, id: action.sprintId }),
           state,
-          "Sprint with not done elements cannot be closed"
+          "Sprint with not done elements cannot be ended"
         );
       case ProductAction.DELETE_SPRINT:
         return deleteSprint({ productData: state, id: action.sprintId });
