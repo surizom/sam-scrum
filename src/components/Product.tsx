@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import React, { Dispatch, useContext } from "react";
+import React, { Dispatch, useContext, useState } from "react";
 import styled from "styled-components";
 import { DragDropContext, Droppable, DropResult } from "react-beautiful-dnd";
 import { v4 as uuidv4 } from "uuid";
@@ -9,6 +9,7 @@ import { ProductAction } from "../state/constants";
 import ProductBackLog from "./ProductBacklog";
 import Sprint from "./Sprint";
 import { Sprints } from "../types/types";
+import AddSprintModal from "./AddSprintModal";
 
 const ProductContainer = styled.div`
   flex: 1;
@@ -89,6 +90,7 @@ const onDragEnd = (dispatch: Dispatch<ProductActionType>) => (result: DropResult
 };
 
 const Product = () => {
+  const [isAddSprintModalOpen, setIsAddSprintModalOpen] = useState(false);
   const { productData, dispatch } = useContext(ProductContext);
 
   if (!productData) {
@@ -104,11 +106,8 @@ const Product = () => {
     }
   };
 
-  const addSprint = () => {
+  const addSprint = (goal: string, startDate: Date, endDate: Date) => {
     const id = uuidv4();
-    const goal = "my goal";
-    const startDate = new Date();
-    const endDate = new Date();
     dispatch({
       type: ProductAction.CREATE_SPRINT,
       sprintId: id,
@@ -130,7 +129,7 @@ const Product = () => {
           <ProductContainer ref={provided.innerRef} {...provided.droppableProps}>
             <ProductHeader>
               <ProductTitle>{productData.product_title}</ProductTitle>
-              <AddSprintButton type="button" onClick={() => addSprint()}>
+              <AddSprintButton type="button" onClick={() => setIsAddSprintModalOpen(true)}>
                 <AddSprintPlusIcon>+</AddSprintPlusIcon>
                 Add Sprint
               </AddSprintButton>
@@ -149,6 +148,16 @@ const Product = () => {
               ))}
               {provided.placeholder}
             </ProductContent>
+            <AddSprintModal
+              onClose={() => {
+                setIsAddSprintModalOpen(false);
+              }}
+              onAddSprint={(goal: string, startDate: Date, endDate: Date) => {
+                addSprint(goal, startDate, endDate);
+                setIsAddSprintModalOpen(false);
+              }}
+              isOpen={isAddSprintModalOpen}
+            />
           </ProductContainer>
         )}
       </Droppable>
